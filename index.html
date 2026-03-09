@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anlık Ezan Vakti – Ramazan-ı Şerif</title>
+    <meta name="description"
+        content="Dünya üzerinde anlık olarak ezan okunan yerleri 3D küre haritasında gösteren interaktif Osmanlı & Ramazan temalı uygulama." />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ottoman-red: #c3141f;
+            --ottoman-red-dark: #8a0b10;
+            --gold: #e8c064;
+            --gold2: #b5852a;
+            --fajr: #7b61ff;
+            --dhuhr: #ffcc00;
+            --asr: #ff8c42;
+            --maghrib: #ff4f6d;
+            --isha: #4fc3f7;
+            --bg: #030812;
+            --panel: rgba(15, 6, 8, 0.85);
+            --border: rgba(232, 192, 100, 0.3);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            color: #e8e8f0;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* ── Top Bar ── */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            background: linear-gradient(180deg, rgba(15, 6, 8, 0.95) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(232, 192, 100, 0.1);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 46px;
+            height: 46px;
+            background: radial-gradient(circle at 30% 30%, var(--ottoman-red), var(--ottoman-red-dark));
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(195, 20, 31, 0.5);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: #fff;
+            margin-right: 2px;
+        }
+
+        .logo-text h1 {
+            font-family: 'Amiri', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .logo-text p {
+            font-size: .80rem;
+            color: rgba(255, 255, 255, .8);
+            font-weight: 400;
+        }
+
+        /* ── Legend ── */
+        #legend {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 7px 16px;
+            backdrop-filter: blur(12px);
+            font-size: .8rem;
+            font-weight: 500;
+            transition: all .3s;
+        }
+
+        .leg-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .act {
+            border-color: rgba(245, 200, 66, .45);
+            background: rgba(245, 200, 66, .08);
+        }
+
+        /* ── Info Panel ── */
+        #info-panel {
+            position: fixed;
+            right: 20px;
+            top: 80px;
+            width: 270px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            /* Osmanlı estetiği için köşeler biraz daha keskin */
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 10;
+            box-shadow: inset 0 0 20px rgba(232, 192, 100, 0.05);
+            /* Altın yansıma */
+        }
+
+        #info-panel h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: .5px;
+            margin-bottom: 14px;
+            text-transform: capitalize;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            font-size: .82rem;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, .5);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* ── Glow pulse ── */
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.3);
+            }
+        }
+
+        /* ── Loading screen ── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 1s ease;
+        }
+
+        #loading .ld-icon {
+            font-size: 3rem;
+            animation: pulseGlow 1.4s infinite;
+        }
+
+        #loading .ld-text {
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-top: 16px;
+            letter-spacing: 1px;
+        }
+
+        #loading .ld-sub {
+            font-size: .75rem;
+            color: rgba(255, 255, 255, .35);
+            margin-top: 6px;
+        }
+
+        #loading .ld-bar {
+            margin-top: 24px;
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #loading .ld-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold2), var(--gold));
+            border-radius: 3px;
+            transition: width .3s;
+        }
+
+        /* ── Tooltip ── */
+        #tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(10, 22, 45, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: .8rem;
+            max-width: 200px;
+            z-index: 20;
+            display: none;
+            backdrop-filter: blur(16px);
+        }
+
+        #tooltip .tt-city {
+            font-weight: 700;
+            font-size: .9rem;
+            color: #fff;
+        }
+
+        #tooltip .tt-country {
+            color: rgba(255, 255, 255, .45);
+            font-size: .72rem;
+            margin-bottom: 8px;
+        }
+
+        #tooltip .tt-prayer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #tooltip .tt-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        #tooltip .tt-name {
+            font-weight: 600;
+        }
+
+        #tooltip .tt-time {
+            color: rgba(255, 255, 255, .5);
+            font-size: .72rem;
+            margin-top: 4px;
+        }
+
+        /* ── Mobile Responsiveness ── */
+        @media (max-width: 768px) {
+            #topbar {
+                padding: 6px 10px;
+                background: linear-gradient(180deg, rgba(15, 6, 8, 0.95) 0%, rgba(15, 6, 8, 0.3) 80%, transparent 100%);
+            }
+
+            .logo-icon {
+                width: 28px;
+                height: 28px;
+                border-width: 1px;
+            }
+
+            .logo-icon svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .logo-text h1 {
+                font-size: 0.9rem;
+                letter-spacing: 0;
+            }
+
+            .logo-text p {
+                font-size: 0.55rem;
+            }
+
+            #info-panel {
+                top: auto;
+                bottom: 45px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 92%;
+                max-width: none;
+                padding: 6px 12px;
+                background: rgba(15, 6, 8, 0.7);
+                border-radius: 8px;
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(232, 192, 100, 0.15);
+            }
+
+            #info-panel h3 {
+                font-size: 0.75rem;
+                margin-bottom: 4px;
+                padding-bottom: 2px;
+                text-align: center;
+                border-bottom: 1px dashed rgba(232, 192, 100, 0.3);
+            }
+
+            .stat-row {
+                font-size: 0.65rem;
+                padding: 2px 0;
+                border-bottom: none;
+            }
+
+            #legend {
+                bottom: 6px;
+                gap: 4px;
+                padding: 0 4px;
+                width: 100%;
+            }
+
+            .leg-item {
+                font-size: 0.55rem;
+                padding: 2px 6px;
+                border-radius: 6px;
+                background: rgba(15, 6, 8, 0.6);
+            }
+
+            .leg-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="ld-icon">🕌</div>
+        <div class="ld-text">Ezan Vakitleri Hesaplanıyor</div>
+        <div class="ld-sub">Dünya üzerindeki ezan vakitleri yükleniyor…</div>
+        <div class="ld-bar">
+            <div class="ld-fill" id="ld-fill"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip">
+        <div class="tt-city" id="tt-city"></div>
+        <div class="tt-country" id="tt-country"></div>
+        <div class="tt-prayer">
+            <div class="tt-dot" id="tt-dot"></div>
+            <div class="tt-name" id="tt-name"></div>
+        </div>
+        <div class="tt-time" id="tt-time"></div>
+        <div style="margin-top:8px; font-size:0.75rem; color:var(--gold); display:none" id="tt-click-hint">🎵 Ezan
+            dinlemek için tıklayın</div>
+    </div>
+
+    <!-- Audio Player (Hidden) -->
+    <audio id="adhan-player" style="display:none"></audio>
+
+    <!-- Top Bar -->
+    <div id="topbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <!-- Şanlı Türk Bayrağı / Osmanlı Hilal-Yıldız Vektörü -->
+                <svg viewBox="0 0 512 512">
+                    <path
+                        d="M260.6,60.8C152.9,60.8,65.6,148,65.6,255.8c0,107.8,87.2,195,195,195c64.5,0,121.7-31.4,157.6-79.8 c-20.9,9.4-44.1,14.6-68.4,14.6c-91.5,0-165.7-74.2-165.7-165.7c0-67.9,40.8-126.3,99.4-152.4C276.1,63,268.4,60.8,260.6,60.8z" />
+                    <polygon
+                        points="398.2,284 316.6,284 291.5,206.6 266.3,284 184.7,284 250.8,332.1 225.6,409.5 291.5,361.3 357.3,409.5 332.1,332.1 " />
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>Anlık Ezan Takibi</h1>
+                <p>Ramazan-ı Şerif Ayı • Dünya Ezan Vakitleri 🕌</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel">
+        <h3>📊 İstatistikler</h3>
+        <div class="stat-row">
+            <span class="stat-label">Şu an ezan okunan</span>
+            <span class="stat-value" id="stat-active">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">İzlenen şehir sayısı</span>
+            <span class="stat-value" id="stat-total">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">En yoğun vakit</span>
+            <span class="stat-value" id="stat-peak">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Son güncelleme</span>
+            <span class="stat-value" id="stat-update">--</span>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+        <div class="leg-item" id="leg-fajr">
+            <div class="leg-dot" style="background:#7b61ff;box-shadow:0 0 6px #7b61ff"></div>
+            <span>Sabah (Fajr)</span>
+        </div>
+        <div class="leg-item" id="leg-dhuhr">
+            <div class="leg-dot" style="background:#ffcc00;box-shadow:0 0 6px #ffcc00"></div>
+            <span>Öğle (Zuhr)</span>
+        </div>
+        <div class="leg-item" id="leg-asr">
+            <div class="leg-dot" style="background:#ff8c42;box-shadow:0 0 6px #ff8c42"></div>
+            <span>İkindi (Asr)</span>
+        </div>
+        <div class="leg-item" id="leg-maghrib">
+            <div class="leg-dot" style="background:#ff4f6d;box-shadow:0 0 6px #ff4f6d"></div>
+            <span>Akşam (Maghrib)</span>
+        </div>
+        <div class="leg-item" id="leg-isha">
+            <div class="leg-dot" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div>
+            <span>Yatsı (Isha)</span>
+        </div>
+    </div>
+
+    <!-- Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Adhan.js (prayer time calculations) -->
+    <script src="https://cdn.jsdelivr.net/npm/adhan@4.4.3/lib/bundles/adhan.umd.min.js"></script>
+
+    <script>
+        // ─────────────────────────────────────────────
+        //  CITY DATABASE  (lat, lng, city, country, tz)
+        // ─────────────────────────────────────────────
+        const CITIES = [
+            // Turkey
+            { lat: 41.01, lng: 28.97, city: "İstanbul", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 39.92, lng: 32.85, city: "Ankara", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 38.42, lng: 27.14, city: "İzmir", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 37.00, lng: 35.32, city: "Adana", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 37.87, lng: 32.48, city: "Konya", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 40.73, lng: 30.40, city: "Sakarya", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 36.89, lng: 30.71, city: "Antalya", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 41.28, lng: 36.34, city: "Samsun", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 39.73, lng: 37.02, city: "Sivas", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 37.91, lng: 40.24, city: "Diyarbakır", country: "Türkiye", tz: "Europe/Istanbul" },
+            // Middle East
+            { lat: 21.39, lng: 39.86, city: "Mekke", country: "Suudi Arabistan", tz: "Asia/Riyadh" },
+            { lat: 24.47, lng: 39.63, city: "Medine", country: "Suudi Arabistan", tz: "Asia/Riyadh" },
+            { lat: 24.68, lng: 46.72, city: "Riyad", country: "Suudi Arabistan", tz: "Asia/Riyadh" },
+            { lat: 21.49, lng: 39.19, city: "Cidde", country: "Suudi Arabistan", tz: "Asia/Riyadh" },
+            { lat: 30.06, lng: 31.25, city: "Kahire", country: "Mısır", tz: "Africa/Cairo" },
+            { lat: 33.51, lng: 36.29, city: "Şam", country: "Suriye", tz: "Asia/Damascus" },
+            { lat: 33.34, lng: 44.40, city: "Bağdat", country: "Irak", tz: "Asia/Baghdad" },
+            { lat: 32.09, lng: 34.78, city: "Tel Aviv", country: "İsrail", tz: "Asia/Jerusalem" },
+            { lat: 31.95, lng: 35.93, city: "Amman", country: "Ürdün", tz: "Asia/Amman" },
+            { lat: 33.89, lng: 35.50, city: "Beyrut", country: "Lübnan", tz: "Asia/Beirut" },
+            { lat: 25.20, lng: 55.27, city: "Dubai", country: "BAE", tz: "Asia/Dubai" },
+            { lat: 23.61, lng: 58.59, city: "Muskat", country: "Umman", tz: "Asia/Muscat" },
+            { lat: 25.29, lng: 51.53, city: "Doha", country: "Katar", tz: "Asia/Qatar" },
+            { lat: 26.22, lng: 50.59, city: "Manama", country: "Bahreyn", tz: "Asia/Bahrain" },
+            { lat: 15.55, lng: 32.53, city: "Hartum", country: "Sudan", tz: "Africa/Khartoum" },
+            { lat: 15.35, lng: 44.21, city: "Sana", country: "Yemen", tz: "Asia/Aden" },
+            { lat: 35.69, lng: 51.39, city: "Tahran", country: "İran", tz: "Asia/Tehran" },
+            { lat: 34.52, lng: 69.18, city: "Kabil", country: "Afganistan", tz: "Asia/Kabul" },
+            // South Asia
+            { lat: 33.72, lng: 73.06, city: "İslamabad", country: "Pakistan", tz: "Asia/Karachi" },
+            { lat: 24.86, lng: 67.01, city: "Karaçi", country: "Pakistan", tz: "Asia/Karachi" },
+            { lat: 31.55, lng: 74.34, city: "Lahor", country: "Pakistan", tz: "Asia/Karachi" },
+            { lat: 23.73, lng: 90.39, city: "Dakka", country: "Bangladeş", tz: "Asia/Dhaka" },
+            { lat: 28.62, lng: 77.22, city: "Yeni Delhi", country: "Hindistan", tz: "Asia/Kolkata" },
+            { lat: 22.57, lng: 88.36, city: "Kalküta", country: "Hindistan", tz: "Asia/Kolkata" },
+            { lat: 19.08, lng: 72.88, city: "Mumbai", country: "Hindistan", tz: "Asia/Kolkata" },
+            // Southeast Asia
+            { lat: 3.14, lng: 101.69, city: "Kuala Lumpur", country: "Malezya", tz: "Asia/Kuala_Lumpur" },
+            { lat: 1.35, lng: 103.82, city: "Singapur", country: "Singapur", tz: "Asia/Singapore" },
+            { lat: -6.21, lng: 106.85, city: "Cakarta", country: "Endonezya", tz: "Asia/Jakarta" },
+            { lat: 3.59, lng: 98.68, city: "Medan", country: "Endonezya", tz: "Asia/Jakarta" },
+            { lat: -7.25, lng: 112.75, city: "Surabaya", country: "Endonezya", tz: "Asia/Makassar" },
+            { lat: 13.76, lng: 100.50, city: "Bangkok", country: "Tayland", tz: "Asia/Bangkok" },
+            { lat: 14.09, lng: 121.97, city: "Manila", country: "Filipinler", tz: "Asia/Manila" },
+            // Central Asia
+            { lat: 41.30, lng: 69.25, city: "Taşkent", country: "Özbekistan", tz: "Asia/Tashkent" },
+            { lat: 43.26, lng: 76.95, city: "Almatı", country: "Kazakistan", tz: "Asia/Almaty" },
+            { lat: 42.87, lng: 74.59, city: "Bişkek", country: "Kırgızistan", tz: "Asia/Bishkek" },
+            { lat: 37.96, lng: 58.38, city: "Aşgabat", country: "Türkmenistan", tz: "Asia/Ashgabat" },
+            { lat: 38.56, lng: 68.77, city: "Duşanbe", country: "Tacikistan", tz: "Asia/Dushanbe" },
+            // East Asia
+            { lat: 39.91, lng: 116.39, city: "Pekin", country: "Çin", tz: "Asia/Shanghai" },
+            { lat: 43.79, lng: 87.62, city: "Urumçi", country: "Çin", tz: "Asia/Shanghai" },
+            // Africa
+            { lat: -1.29, lng: 36.82, city: "Nairobi", country: "Kenya", tz: "Africa/Nairobi" },
+            { lat: 6.37, lng: 3.38, city: "Lagos", country: "Nijerya", tz: "Africa/Lagos" },
+            { lat: 12.37, lng: 13.36, city: "Ndjamena", country: "Çad", tz: "Africa/Ndjamena" },
+            { lat: 12.65, lng: -8.00, city: "Bamako", country: "Mali", tz: "Africa/Bamako" },
+            { lat: 9.05, lng: 7.49, city: "Abuja", country: "Nijerya", tz: "Africa/Lagos" },
+            { lat: 11.86, lng: 15.75, city: "Ndjamena", country: "Çad", tz: "Africa/Ndjamena" },
+            { lat: 15.55, lng: -0.20, city: "Niamey", country: "Nijer", tz: "Africa/Niamey" },
+            { lat: 14.72, lng: -17.47, city: "Dakar", country: "Senegal", tz: "Africa/Dakar" },
+            { lat: 4.36, lng: 18.55, city: "Bangui", country: "Orta Afrika", tz: "Africa/Bangui" },
+            { lat: 0.39, lng: 9.45, city: "Libreville", country: "Gabon", tz: "Africa/Libreville" },
+            { lat: 6.14, lng: 1.22, city: "Lomé", country: "Togo", tz: "Africa/Lome" },
+            { lat: 18.07, lng: 15.97, city: "Ndjamena", country: "Çad", tz: "Africa/Ndjamena" },
+            { lat: -4.32, lng: 15.32, city: "Kinşasa", country: "Kongo", tz: "Africa/Kinshasa" },
+            { lat: 10.67, lng: -15.57, city: "Konakri", country: "Gine", tz: "Africa/Conakry" },
+            { lat: 12.00, lng: -15.18, city: "Bissau", country: "G.-Bissau", tz: "Africa/Bissau" },
+            { lat: 5.85, lng: -55.17, city: "Paramaribo", country: "Surinam", tz: "America/Paramaribo" },
+            { lat: -25.29, lng: -57.65, city: "Asuncion", country: "Paraguay", tz: "America/Asuncion" },
+            // Europe
+            { lat: 52.52, lng: 13.40, city: "Berlin", country: "Almanya", tz: "Europe/Berlin" },
+            { lat: 48.85, lng: 2.35, city: "Paris", country: "Fransa", tz: "Europe/Paris" },
+            { lat: 51.51, lng: -0.13, city: "Londra", country: "İngiltere", tz: "Europe/London" },
+            { lat: 40.42, lng: -3.71, city: "Madrid", country: "İspanya", tz: "Europe/Madrid" },
+            { lat: 41.90, lng: 12.50, city: "Roma", country: "İtalya", tz: "Europe/Rome" },
+            { lat: 52.37, lng: 4.89, city: "Amsterdam", country: "Hollanda", tz: "Europe/Amsterdam" },
+            { lat: 50.85, lng: 4.35, city: "Brüksel", country: "Belçika", tz: "Europe/Brussels" },
+            { lat: 48.21, lng: 16.37, city: "Viyana", country: "Avusturya", tz: "Europe/Vienna" },
+            { lat: 47.38, lng: 8.54, city: "Zürih", country: "İsviçre", tz: "Europe/Zurich" },
+            { lat: 59.91, lng: 10.75, city: "Oslo", country: "Norveç", tz: "Europe/Oslo" },
+            { lat: 55.68, lng: 12.57, city: "Kopenhag", country: "Danimarka", tz: "Europe/Copenhagen" },
+            { lat: 59.33, lng: 18.07, city: "Stockholm", country: "İsveç", tz: "Europe/Stockholm" },
+            { lat: 60.17, lng: 24.94, city: "Helsinki", country: "Finlandiya", tz: "Europe/Helsinki" },
+            { lat: 41.00, lng: 28.97, city: "Edirne", country: "Türkiye", tz: "Europe/Istanbul" },
+            { lat: 44.80, lng: 20.46, city: "Belgrad", country: "Sırbistan", tz: "Europe/Belgrade" },
+            { lat: 42.00, lng: 21.43, city: "Üsküp", country: "Makedonya", tz: "Europe/Skopje" },
+            { lat: 41.33, lng: 19.83, city: "Tiran", country: "Arnavutluk", tz: "Europe/Tirane" },
+            { lat: 43.84, lng: 18.36, city: "Saraybosna", country: "Bosna-Hersek", tz: "Europe/Sarajevo" },
+            { lat: 55.75, lng: 37.62, city: "Moskova", country: "Rusya", tz: "Europe/Moscow" },
+            // Americas
+            { lat: 40.71, lng: -74.01, city: "New York", country: "ABD", tz: "America/New_York" },
+            { lat: 34.05, lng: -118.24, city: "Los Angeles", country: "ABD", tz: "America/Los_Angeles" },
+            { lat: 41.88, lng: -87.63, city: "Chicago", country: "ABD", tz: "America/Chicago" },
+            { lat: 29.76, lng: -95.37, city: "Houston", country: "ABD", tz: "America/Chicago" },
+            { lat: 45.52, lng: -73.58, city: "Montreal", country: "Kanada", tz: "America/Toronto" },
+            { lat: 43.70, lng: -79.42, city: "Toronto", country: "Kanada", tz: "America/Toronto" },
+            { lat: 49.25, lng: -123.12, city: "Vancouver", country: "Kanada", tz: "America/Vancouver" },
+            { lat: -23.55, lng: -46.63, city: "São Paulo", country: "Brezilya", tz: "America/Sao_Paulo" },
+            { lat: -34.61, lng: -58.38, city: "Buenos Aires", country: "Arjantin", tz: "America/Argentina/Buenos_Aires" },
+            { lat: 4.71, lng: -74.07, city: "Bogota", country: "Kolombiya", tz: "America/Bogota" },
+            { lat: -12.05, lng: -77.04, city: "Lima", country: "Peru", tz: "America/Lima" },
+            { lat: 10.50, lng: -66.92, city: "Karakas", country: "Venezuela", tz: "America/Caracas" },
+            { lat: 19.43, lng: -99.13, city: "Meksiko", country: "Meksika", tz: "America/Mexico_City" },
+            { lat: 25.68, lng: -80.20, city: "Miami", country: "ABD", tz: "America/New_York" },
+            { lat: 33.75, lng: -84.39, city: "Atlanta", country: "ABD", tz: "America/New_York" },
+            { lat: 47.61, lng: -122.33, city: "Seattle", country: "ABD", tz: "America/Los_Angeles" },
+            // Oceania
+            { lat: -33.87, lng: 151.21, city: "Sidney", country: "Avustralya", tz: "Australia/Sydney" },
+            { lat: -37.81, lng: 144.96, city: "Melbourne", country: "Avustralya", tz: "Australia/Melbourne" },
+            { lat: -27.47, lng: 153.02, city: "Brisbane", country: "Avustralya", tz: "Australia/Brisbane" },
+            { lat: -31.95, lng: 115.86, city: "Perth", country: "Avustralya", tz: "Australia/Perth" },
+            { lat: -36.86, lng: 174.77, city: "Auckland", country: "Yeni Zelanda", tz: "Pacific/Auckland" },
+        ];
+
+        // ─────────────────────────────────────────────
+        //  PRAYER COLORS, NAMES & AUDIO (Makams)
+        // ─────────────────────────────────────────────
+        const PRAYER_INFO = {
+            fajr: { color: 0x7b61ff, glowColor: '#7b61ff', name: 'Sabah (Fajr)', emoji: '🌙', audio: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Adhan_in_Istanbul.ogg' },
+            dhuhr: { color: 0xffcc00, glowColor: '#ffcc00', name: 'Öğle (Zuhr)', emoji: '☀️', audio: 'https://download.quranicaudio.com/adhan/makkah.mp3' },
+            asr: { color: 0xff8c42, glowColor: '#ff8c42', name: 'İkindi (Asr)', emoji: '🌤️', audio: 'https://download.quranicaudio.com/adhan/madinah.mp3' },
+            maghrib: { color: 0xff4f6d, glowColor: '#ff4f6d', name: 'Akşam (Maghrib)', emoji: '🌅', audio: 'https://download.quranicaudio.com/adhan/abdul_basit.mp3' },
+            isha: { color: 0x4fc3f7, glowColor: '#4fc3f7', name: 'Yatsı (Isha)', emoji: '🌃', audio: 'https://download.quranicaudio.com/adhan/mishary_al-afasy.mp3' },
+        };
+
+        // Ezan window: prayer time ± this many minutes
+        const EZAN_WINDOW_MIN = 3;
+
+        // ─────────────────────────────────────────────
+        //  THREE.JS SETUP
+        // ─────────────────────────────────────────────
+        const container = document.getElementById('canvas-container');
+        const W = window.innerWidth, H = window.innerHeight;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(W, H);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+        camera.position.set(0, 0, 3.5);
+
+        // ── Stars ──
+        (function addStars() {
+            const geo = new THREE.BufferGeometry();
+            const n = 4000;
+            const pos = new Float32Array(n * 3);
+            for (let i = 0; i < n * 3; i++) {
+                pos[i] = (Math.random() - 0.5) * 300;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, sizeAttenuation: true });
+            scene.add(new THREE.Points(geo, mat));
+        })();
+
+        // ── Globe ──
+        const GLOBE_R = 1.0;
+        const globeGeo = new THREE.SphereGeometry(GLOBE_R, 64, 64);
+
+        // Atmosphere glow (outer sphere)
+        const atmosphereGeo = new THREE.SphereGeometry(GLOBE_R * 1.08, 64, 64);
+        const atmosphereMat = new THREE.ShaderMaterial({
+            vertexShader: `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+            fragmentShader: `
+    varying vec3 vNormal;
+    void main() {
+      float intensity = pow(0.7 - dot(vNormal, vec3(0,0,1.0)), 3.0);
+      gl_FragColor = vec4(0.09, 0.42, 0.82, 1.0) * intensity;
+    }
+  `,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide,
+            transparent: true,
+        });
+        scene.add(new THREE.Mesh(atmosphereGeo, atmosphereMat));
+
+        // ─────────────────────────────────────────────
+        //  REALISTIC EARTH TEXTURE
+        // ─────────────────────────────────────────────
+        const textureLoader = new THREE.TextureLoader();
+
+        // High-res realistic earth map
+        const earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+
+        const globeMat = new THREE.MeshPhongMaterial({
+            map: earthMap,
+            color: 0xffffff,
+            emissive: 0x111111,
+            specular: 0x222222,
+            shininess: 15,
+            transparent: false,
+        });
+
+        const globe = new THREE.Mesh(globeGeo, globeMat);
+        scene.add(globe);
+
+        // ── Lighting ──
+        scene.add(new THREE.AmbientLight(0x334466, 1.2));
+        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+        sunLight.position.set(5, 3, 5);
+        scene.add(sunLight);
+        const rimLight = new THREE.DirectionalLight(0x2244aa, 0.5);
+        rimLight.position.set(-5, -2, -3);
+        scene.add(rimLight);
+
+        // ─────────────────────────────────────────────
+        //  HELPER: lat/lng → 3D position
+        // ─────────────────────────────────────────────
+        function latLngToVec3(lat, lng, r) {
+            const phi = (90 - lat) * Math.PI / 180;
+            const theta = (lng + 180) * Math.PI / 180;
+            return new THREE.Vector3(
+                -r * Math.sin(phi) * Math.cos(theta),
+                r * Math.cos(phi),
+                r * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // ─────────────────────────────────────────────
+        //  PRAYER TIME CALCULATION
+        // ─────────────────────────────────────────────
+        function calcPrayerTimes(lat, lng, date) {
+            try {
+                const coords = new adhan.Coordinates(lat, lng);
+                const params = adhan.CalculationMethod.MoonsightingCommittee();
+                params.madhab = adhan.Madhab.Hanafi;
+                const pt = new adhan.PrayerTimes(coords, date, params);
+                return {
+                    fajr: pt.fajr,
+                    dhuhr: pt.dhuhr,
+                    asr: pt.asr,
+                    maghrib: pt.maghrib,
+                    isha: pt.isha,
+                };
+            } catch (e) { return null; }
+        }
+
+        function isEzanNow(prayerTime, nowMs) {
+            const diff = Math.abs(nowMs - prayerTime.getTime()) / 60000; // minutes
+            return diff <= EZAN_WINDOW_MIN;
+        }
+
+        function currentPrayer(times, nowMs) {
+            const window = EZAN_WINDOW_MIN * 60 * 1000;
+            for (const [key, t] of Object.entries(times)) {
+                if (t && Math.abs(nowMs - t.getTime()) <= window) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
+        // ─────────────────────────────────────────────
+        //  MARKERS
+        // ─────────────────────────────────────────────
+        const markerGroup = new THREE.Group();
+        scene.add(markerGroup);
+
+        const cityData = []; // stores { city, marker3D, glowMesh, ringMesh, times }
+
+        function createMarker(color) {
+            const group = new THREE.Group();
+
+            // Core dot — bigger
+            const dotGeo = new THREE.SphereGeometry(0.018, 16, 16);
+            const dotMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 });
+            const dot = new THREE.Mesh(dotGeo, dotMat);
+            group.add(dot);
+
+            // Inner glow
+            const glowGeo = new THREE.SphereGeometry(0.034, 16, 16);
+            const glowMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3, side: THREE.FrontSide });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            group.add(glow);
+
+            // Outer glow halo
+            const haloGeo = new THREE.SphereGeometry(0.055, 16, 16);
+            const haloMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.08, side: THREE.FrontSide });
+            const halo = new THREE.Mesh(haloGeo, haloMat);
+            group.add(halo);
+
+            // Ring 1
+            const ringGeo = new THREE.RingGeometry(0.040, 0.052, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            group.add(ring);
+
+            // Ring 2 (outer pulse)
+            const ring2Geo = new THREE.RingGeometry(0.065, 0.072, 32);
+            const ring2Mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+            const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+            group.add(ring2);
+
+            return { group, dot, dotMat, glow, glowMat, halo, haloMat, ring, ringMat, ring2, ring2Mat };
+        }
+
+        function buildMarkers() {
+            // Remove old markers
+            while (markerGroup.children.length) markerGroup.remove(markerGroup.children[0]);
+            cityData.length = 0;
+
+            CITIES.forEach((c, i) => {
+                setTimeout(() => {
+                    const date = new Date();
+                    const times = calcPrayerTimes(c.lat, c.lng, date);
+                    if (!times) return;
+
+                    const pos = latLngToVec3(c.lat, c.lng, GLOBE_R + 0.012);
+                    const marker = createMarker(0x334466);
+                    marker.group.position.copy(pos);
+
+                    // Orient ring to face outward
+                    const normal = pos.clone().normalize();
+                    const up = new THREE.Vector3(0, 1, 0);
+                    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, normal);
+                    marker.ring.quaternion.copy(quaternion);
+
+                    markerGroup.add(marker.group);
+                    cityData.push({ ...c, pos, marker, times });
+
+                    const pct = Math.round(((i + 1) / CITIES.length) * 100);
+                    document.getElementById('ld-fill').style.width = pct + '%';
+
+                    if (i === CITIES.length - 1) {
+                        setTimeout(() => {
+                            const ld = document.getElementById('loading');
+                            ld.style.opacity = '0';
+                            setTimeout(() => ld.style.display = 'none', 1000);
+                        }, 400);
+                        updateMarkers();
+                    }
+                }, i * 8);
+            });
+        }
+
+        // ─────────────────────────────────────────────
+        //  UPDATE MARKERS STATE
+        // ─────────────────────────────────────────────
+        const prayerCounts = { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 };
+        let activeCount = 0;
+
+        function updateMarkers() {
+            const now = new Date();
+            const nowMs = now.getTime();
+            activeCount = 0;
+            Object.keys(prayerCounts).forEach(k => prayerCounts[k] = 0);
+
+            cityData.forEach(cd => {
+                const prayer = currentPrayer(cd.times, nowMs);
+                cd.activePrayer = prayer;
+
+                if (prayer) {
+                    const info = PRAYER_INFO[prayer];
+                    const col = new THREE.Color(info.color);
+                    cd.marker.dotMat.color.set(col);
+                    cd.marker.glowMat.color.set(col);
+                    cd.marker.ringMat.color.set(col);
+                    cd.marker.ring2Mat.color.set(col);
+                    cd.marker.haloMat.color.set(col);
+                    cd.marker.dotMat.opacity = 1;
+                    cd.marker.glowMat.opacity = 0.65;
+                    cd.marker.ringMat.opacity = 0.95;
+                    cd.marker.ring2Mat.opacity = 0.45;
+                    cd.marker.haloMat.opacity = 0.15;
+                    cd.marker.dot.scale.setScalar(2.0);
+                    cd.active = true;
+                    activeCount++;
+                    prayerCounts[prayer]++;
+                } else {
+                    cd.marker.dotMat.color.set(0x1a3355);
+                    cd.marker.glowMat.color.set(0x0d1a2e);
+                    cd.marker.ringMat.color.set(0x0d1a2e);
+                    cd.marker.ring2Mat.color.set(0x0d1a2e);
+                    cd.marker.haloMat.color.set(0x0d1a2e);
+                    cd.marker.dotMat.opacity = 0.35;
+                    cd.marker.glowMat.opacity = 0.04;
+                    cd.marker.ringMat.opacity = 0.06;
+                    cd.marker.ring2Mat.opacity = 0.03;
+                    cd.marker.haloMat.opacity = 0.01;
+                    cd.marker.dot.scale.setScalar(1.0);
+                    cd.active = false;
+                }
+            });
+
+            // Recalculate times for next day if needed — update times periodically
+            cityData.forEach(cd => {
+                // Refresh prayer times each call
+                const fresh = calcPrayerTimes(cd.lat, cd.lng, now);
+                if (fresh) cd.times = fresh;
+            });
+
+            updateStats();
+            updateLegend();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-active').textContent = activeCount;
+            document.getElementById('stat-total').textContent = CITIES.length;
+
+            // Peak prayer
+            let peak = '-';
+            let max = 0;
+            for (const [k, v] of Object.entries(prayerCounts)) {
+                if (v > max) { max = v; peak = PRAYER_INFO[k].emoji + ' ' + PRAYER_INFO[k].name; }
+            }
+            document.getElementById('stat-peak').textContent = max > 0 ? peak : '-';
+            document.getElementById('stat-update').textContent = new Date().toLocaleTimeString('tr-TR');
+        }
+
+        function updateLegend() {
+            const legs = { fajr: 'leg-fajr', dhuhr: 'leg-dhuhr', asr: 'leg-asr', maghrib: 'leg-maghrib', isha: 'leg-isha' };
+            for (const [k, id] of Object.entries(legs)) {
+                const el = document.getElementById(id);
+                if (prayerCounts[k] > 0) {
+                    el.classList.add('act');
+                    el.querySelector('span').textContent = PRAYER_INFO[k].name + ' (' + prayerCounts[k] + ')';
+                } else {
+                    el.classList.remove('act');
+                    el.querySelector('span').textContent = PRAYER_INFO[k].name;
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        //  ORBIT CONTROLS (manual)
+        // ─────────────────────────────────────────────
+        let isDragging = false, prevMouse = { x: 0, y: 0 };
+        let rotX = 0, rotY = 0;
+        let autoRotate = true;
+        let autoTimer = null;
+
+        document.addEventListener('mousedown', e => {
+            isDragging = true;
+            prevMouse = { x: e.clientX, y: e.clientY };
+            autoRotate = false;
+            clearTimeout(autoTimer);
+        });
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            autoTimer = setTimeout(() => autoRotate = true, 4000);
+        });
+        document.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const dx = e.clientX - prevMouse.x;
+            const dy = e.clientY - prevMouse.y;
+            rotY += dx * 0.005;
+            rotX += dy * 0.005;
+            rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+            prevMouse = { x: e.clientX, y: e.clientY };
+            globe.rotation.y = rotY;
+            globe.rotation.x = rotX;
+            markerGroup.rotation.y = rotY;
+            markerGroup.rotation.x = rotX;
+        });
+
+        // Touch
+        document.addEventListener('touchstart', e => {
+            isDragging = true;
+            prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            autoRotate = false; clearTimeout(autoTimer);
+        });
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+            autoTimer = setTimeout(() => autoRotate = true, 4000);
+        });
+        document.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            const dx = e.touches[0].clientX - prevMouse.x;
+            const dy = e.touches[0].clientY - prevMouse.y;
+            rotY += dx * 0.005;
+            rotX += dy * 0.003;
+            rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+            prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            globe.rotation.y = rotY; globe.rotation.x = rotX;
+            markerGroup.rotation.y = rotY; markerGroup.rotation.x = rotX;
+        });
+
+        // Scroll zoom
+        document.addEventListener('wheel', e => {
+            camera.position.z = Math.max(1.8, Math.min(6, camera.position.z + e.deltaY * 0.002));
+        });
+
+        // ─────────────────────────────────────────────
+        //  RAYCASTING / TOOLTIP & AUDIO PLAYING
+        // ─────────────────────────────────────────────
+        const raycaster = new THREE.Raycaster();
+        const mouse2D = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+        const audioPlayer = document.getElementById('adhan-player');
+
+        // Track the currently hovered active city
+        let hoveredCity = null;
+
+        document.addEventListener('mousemove', e => {
+            mouse2D.x = (e.clientX / W) * 2 - 1;
+            mouse2D.y = -(e.clientY / H) * 2 + 1;
+
+            if (isDragging) return;
+
+            raycaster.setFromCamera(mouse2D, camera);
+            const objects = cityData.map(cd => cd.marker.dot);
+            const hits = raycaster.intersectObjects(objects);
+
+            if (hits.length) {
+                document.body.style.cursor = 'pointer';
+                const idx = objects.indexOf(hits[0].object);
+                if (idx >= 0) {
+                    const cd = cityData[idx];
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (e.clientX + 14) + 'px';
+                    tooltip.style.top = (e.clientY - 14) + 'px';
+                    document.getElementById('tt-city').textContent = cd.city;
+                    document.getElementById('tt-country').textContent = cd.country;
+
+                    if (cd.activePrayer) {
+                        hoveredCity = cd;
+                        const pi = PRAYER_INFO[cd.activePrayer];
+                        document.getElementById('tt-dot').style.background = pi.glowColor;
+                        document.getElementById('tt-name').textContent = pi.emoji + ' ' + pi.name + ' ezanı okunuyor';
+                        document.getElementById('tt-name').style.color = pi.glowColor;
+                        const t = cd.times[cd.activePrayer];
+                        document.getElementById('tt-time').textContent = '⏰ ' + t.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + ' (yerel)';
+                        document.getElementById('tt-click-hint').style.display = 'block';
+                    } else {
+                        hoveredCity = null;
+                        document.getElementById('tt-dot').style.background = '#334';
+                        document.getElementById('tt-name').textContent = 'Şu an ezan vakti değil';
+                        document.getElementById('tt-name').style.color = 'rgba(255,255,255,.5)';
+                        document.getElementById('tt-time').textContent = '';
+                        document.getElementById('tt-click-hint').style.display = 'none';
+                    }
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                tooltip.style.display = 'none';
+                hoveredCity = null;
+            }
+        });
+
+        // Click to play Adhan
+        document.addEventListener('click', () => {
+            if (hoveredCity && hoveredCity.activePrayer) {
+                const pi = PRAYER_INFO[hoveredCity.activePrayer];
+                audioPlayer.src = pi.audio;
+                audioPlayer.play().then(() => {
+                    document.getElementById('tt-click-hint').textContent = '🔊 Ezan okunuyor...';
+                }).catch(err => {
+                    console.log("Audio play failed:", err);
+                    document.getElementById('tt-click-hint').textContent = '🔇 Ses oynatılamadı veya engellendi';
+                });
+            }
+        });
+
+
+
+        // ─────────────────────────────────────────────
+        //  ANIMATION LOOP
+        // ─────────────────────────────────────────────
+        let t = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            t += 0.016;
+
+            // Auto-rotate
+            if (autoRotate) {
+                rotY += 0.0015;
+                globe.rotation.y = rotY;
+                markerGroup.rotation.y = rotY;
+            }
+
+            // Pulse active markers
+            cityData.forEach(cd => {
+                if (cd.active) {
+                    const pulse = 1.0 + 0.45 * Math.sin(t * 3.0 + cd.lat);
+                    const pulse2 = 1.0 + 0.6 * Math.sin(t * 2.2 + cd.lng + 1.2);
+                    cd.marker.glow.scale.setScalar(pulse);
+                    cd.marker.halo.scale.setScalar(pulse2);
+                    cd.marker.ring.scale.setScalar(pulse * 0.9);
+                    cd.marker.ring2.scale.setScalar(pulse2 * 0.85);
+                    cd.marker.ringMat.opacity = 0.5 + 0.45 * Math.sin(t * 2.5 + cd.lng);
+                    cd.marker.ring2Mat.opacity = 0.2 + 0.25 * Math.sin(t * 1.8 + cd.lat + 2.0);
+                    cd.marker.haloMat.opacity = 0.06 + 0.09 * Math.abs(Math.sin(t * 1.5 + cd.lat));
+                } else {
+                    cd.marker.glow.scale.setScalar(1);
+                    cd.marker.ring.scale.setScalar(1);
+                    cd.marker.ring2.scale.setScalar(1);
+                    cd.marker.halo.scale.setScalar(1);
+                }
+            });
+
+
+            renderer.render(scene, camera);
+        }
+
+        // ─────────────────────────────────────────────
+        //  RESIZE
+        // ─────────────────────────────────────────────
+        window.addEventListener('resize', () => {
+            const w = window.innerWidth, h = window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        });
+
+        // ─────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────
+        buildMarkers();
+        animate();
+
+        // Update prayer times every 30 seconds
+        setInterval(updateMarkers, 30 * 1000);
+
+    </script>
+</body>
+
+</html>
