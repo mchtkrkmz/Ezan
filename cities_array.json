@@ -1,0 +1,2249 @@
+[
+    {
+        "lat": 36.9914,
+        "lng": 35.3308,
+        "city": "adana",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.7636,
+        "lng": 38.2773,
+        "city": "ad\u0131yaman",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.7569,
+        "lng": 30.5387,
+        "city": "afyonkarahisar",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.7191,
+        "lng": 43.0506,
+        "city": "a\u011fr\u0131",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.6565,
+        "lng": 35.8373,
+        "city": "amasya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.9334,
+        "lng": 32.8597,
+        "city": "ankara",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 36.8969,
+        "lng": 30.7133,
+        "city": "antalya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.1809,
+        "lng": 41.8208,
+        "city": "artvin",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.838,
+        "lng": 27.8456,
+        "city": "ayd\u0131n",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.6533,
+        "lng": 27.8903,
+        "city": "bal\u0131kesir",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.1426,
+        "lng": 29.9793,
+        "city": "bilecik",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.8855,
+        "lng": 40.4966,
+        "city": "bing\u00f6l",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.4006,
+        "lng": 42.1095,
+        "city": "bitlis",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.7325,
+        "lng": 31.6082,
+        "city": "bolu",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.7183,
+        "lng": 30.2823,
+        "city": "burdur",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.1885,
+        "lng": 29.061,
+        "city": "bursa",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.1467,
+        "lng": 26.4086,
+        "city": "\u00e7anakkale",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.6002,
+        "lng": 33.6162,
+        "city": "\u00e7ank\u0131r\u0131",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.5499,
+        "lng": 34.9537,
+        "city": "\u00e7orum",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.783,
+        "lng": 29.0963,
+        "city": "denizli",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.925,
+        "lng": 40.211,
+        "city": "diyarbak\u0131r",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.6771,
+        "lng": 26.5557,
+        "city": "edirne",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.6748,
+        "lng": 39.2225,
+        "city": "elaz\u0131\u011f",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.7468,
+        "lng": 39.4911,
+        "city": "erzincan",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.9055,
+        "lng": 41.2658,
+        "city": "erzurum",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.7667,
+        "lng": 30.5256,
+        "city": "eski\u015fehir",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.066,
+        "lng": 37.3781,
+        "city": "gaziantep",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.9175,
+        "lng": 38.3927,
+        "city": "giresun",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.4608,
+        "lng": 39.4803,
+        "city": "g\u00fcm\u00fc\u015fhane",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.5774,
+        "lng": 43.7368,
+        "city": "hakkari",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 36.2023,
+        "lng": 36.1613,
+        "city": "hatay",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.7626,
+        "lng": 30.5537,
+        "city": "\u0131sparta",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 36.8121,
+        "lng": 34.6415,
+        "city": "mersin",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.0082,
+        "lng": 28.9784,
+        "city": "istanbul",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.4237,
+        "lng": 27.1428,
+        "city": "izmir",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.6013,
+        "lng": 43.0975,
+        "city": "kars",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.3766,
+        "lng": 33.7765,
+        "city": "kastamonu",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.7205,
+        "lng": 35.4826,
+        "city": "kayseri",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.7355,
+        "lng": 27.2244,
+        "city": "k\u0131rklareli",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.1461,
+        "lng": 34.1595,
+        "city": "k\u0131r\u015fehir",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.7654,
+        "lng": 29.9408,
+        "city": "kocaeli",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.8746,
+        "lng": 32.4932,
+        "city": "konya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.42,
+        "lng": 29.9857,
+        "city": "k\u00fctahya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.3554,
+        "lng": 38.3335,
+        "city": "malatya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.614,
+        "lng": 27.4296,
+        "city": "manisa",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.5753,
+        "lng": 36.9228,
+        "city": "kahramanmara\u015f",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.3129,
+        "lng": 40.734,
+        "city": "mardin",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.2154,
+        "lng": 28.3634,
+        "city": "mu\u011fla",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.7346,
+        "lng": 41.491,
+        "city": "mu\u015f",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.6247,
+        "lng": 34.7142,
+        "city": "nev\u015fehir",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.9698,
+        "lng": 34.6766,
+        "city": "ni\u011fde",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.9862,
+        "lng": 37.8797,
+        "city": "ordu",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.0255,
+        "lng": 40.5177,
+        "city": "rize",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.7889,
+        "lng": 30.406,
+        "city": "sakarya",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.2797,
+        "lng": 36.3361,
+        "city": "samsun",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.9274,
+        "lng": 41.942,
+        "city": "siirt",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 42.028,
+        "lng": 35.1517,
+        "city": "sinop",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.7505,
+        "lng": 37.015,
+        "city": "sivas",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.9781,
+        "lng": 27.5117,
+        "city": "tekirda\u011f",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.3235,
+        "lng": 36.5522,
+        "city": "tokat",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.0027,
+        "lng": 39.7168,
+        "city": "trabzon",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.1062,
+        "lng": 39.5483,
+        "city": "tunceli",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.1674,
+        "lng": 38.7955,
+        "city": "\u015fanl\u0131urfa",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.6742,
+        "lng": 29.4059,
+        "city": "u\u015fak",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.5012,
+        "lng": 43.373,
+        "city": "van",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.821,
+        "lng": 34.8086,
+        "city": "yozgat",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.4535,
+        "lng": 31.7894,
+        "city": "zonguldak",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 38.3686,
+        "lng": 34.0297,
+        "city": "aksaray",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.2603,
+        "lng": 40.228,
+        "city": "bayburt",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.181,
+        "lng": 33.2222,
+        "city": "karaman",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.8398,
+        "lng": 33.5089,
+        "city": "k\u0131r\u0131kkale",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.8895,
+        "lng": 41.1293,
+        "city": "batman",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.519,
+        "lng": 42.4537,
+        "city": "\u015f\u0131rnak",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.6376,
+        "lng": 32.3338,
+        "city": "bart\u0131n",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.113,
+        "lng": 42.7023,
+        "city": "ardahan",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 39.9201,
+        "lng": 44.0436,
+        "city": "\u0131\u011fd\u0131r",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.6549,
+        "lng": 29.2842,
+        "city": "yalova",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 41.1956,
+        "lng": 32.6227,
+        "city": "karab\u00fck",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 36.7165,
+        "lng": 37.1147,
+        "city": "kilis",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 37.0746,
+        "lng": 36.2464,
+        "city": "osmaniye",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 40.8387,
+        "lng": 31.1626,
+        "city": "d\u00fczce",
+        "country": "T\u00fcrkiye",
+        "tz": "Europe/Istanbul"
+    },
+    {
+        "lat": 23.43,
+        "lng": 90.24,
+        "city": "Dhaka",
+        "country": "Bangladesh",
+        "tz": "UTC"
+    },
+    {
+        "lat": 50.5,
+        "lng": 4.2,
+        "city": "Brussels",
+        "country": "Belgium",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.22,
+        "lng": -1.31,
+        "city": "Ouagadougou",
+        "country": "Burkina Faso",
+        "tz": "UTC"
+    },
+    {
+        "lat": 42.41,
+        "lng": 23.19,
+        "city": "Sofia",
+        "country": "Bulgaria",
+        "tz": "UTC"
+    },
+    {
+        "lat": 43.52,
+        "lng": 18.25,
+        "city": "Sarajevo",
+        "country": "Bosnia and Herzegovina",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.06,
+        "lng": -59.37,
+        "city": "Bridgetown",
+        "country": "Barbados",
+        "tz": "UTC"
+    },
+    {
+        "lat": -13.57,
+        "lng": -171.56,
+        "city": "Mata-Utu",
+        "country": "Wallis and Futuna",
+        "tz": "UTC"
+    },
+    {
+        "lat": 17.53,
+        "lng": -62.51,
+        "city": "Gustavia",
+        "country": "Saint Barthelemy",
+        "tz": "UTC"
+    },
+    {
+        "lat": 32.17,
+        "lng": -64.47,
+        "city": "Hamilton",
+        "country": "Bermuda",
+        "tz": "UTC"
+    },
+    {
+        "lat": 4.53,
+        "lng": 114.56,
+        "city": "Bandar Seri Begawan",
+        "country": "Brunei",
+        "tz": "UTC"
+    },
+    {
+        "lat": -16.3,
+        "lng": -68.09,
+        "city": "La Paz",
+        "country": "Bolivia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 26.14,
+        "lng": 50.34,
+        "city": "Manama",
+        "country": "Bahrain",
+        "tz": "UTC"
+    },
+    {
+        "lat": -3.22,
+        "lng": 29.21,
+        "city": "Bujumbura",
+        "country": "Burundi",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.29,
+        "lng": 2.37,
+        "city": "Porto-Novo",
+        "country": "Benin",
+        "tz": "UTC"
+    },
+    {
+        "lat": 27.29,
+        "lng": 89.36,
+        "city": "Thimphu",
+        "country": "Bhutan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.0,
+        "lng": -76.48,
+        "city": "Kingston",
+        "country": "Jamaica",
+        "tz": "UTC"
+    },
+    {
+        "lat": -54.26,
+        "lng": 3.24,
+        "city": null,
+        "country": "Bouvet Island",
+        "tz": "UTC"
+    },
+    {
+        "lat": -24.45,
+        "lng": 25.55,
+        "city": "Gaborone",
+        "country": "Botswana",
+        "tz": "UTC"
+    },
+    {
+        "lat": -13.5,
+        "lng": -171.44,
+        "city": "Apia",
+        "country": "Samoa",
+        "tz": "UTC"
+    },
+    {
+        "lat": -15.47,
+        "lng": -47.55,
+        "city": "Brasilia",
+        "country": "Brazil",
+        "tz": "UTC"
+    },
+    {
+        "lat": 25.05,
+        "lng": -77.21,
+        "city": "Nassau",
+        "country": "Bahamas",
+        "tz": "UTC"
+    },
+    {
+        "lat": 49.11,
+        "lng": -2.06,
+        "city": "Saint Helier",
+        "country": "Jersey",
+        "tz": "UTC"
+    },
+    {
+        "lat": 53.54,
+        "lng": 27.34,
+        "city": "Minsk",
+        "country": "Belarus",
+        "tz": "UTC"
+    },
+    {
+        "lat": 17.15,
+        "lng": -88.46,
+        "city": "Belmopan",
+        "country": "Belize",
+        "tz": "UTC"
+    },
+    {
+        "lat": 55.45,
+        "lng": 37.35,
+        "city": "Moscow",
+        "country": "Russia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -1.57,
+        "lng": 30.04,
+        "city": "Kigali",
+        "country": "Rwanda",
+        "tz": "UTC"
+    },
+    {
+        "lat": 44.5,
+        "lng": 20.3,
+        "city": "Belgrade",
+        "country": "Serbia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -8.35,
+        "lng": 125.36,
+        "city": "Dili",
+        "country": "Timor-Leste",
+        "tz": "UTC"
+    },
+    {
+        "lat": 37.57,
+        "lng": 58.23,
+        "city": "Ashgabat",
+        "country": "Turkmenistan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 38.35,
+        "lng": 68.48,
+        "city": "Dushanbe",
+        "country": "Tajikistan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 44.26,
+        "lng": 26.06,
+        "city": "Bucharest",
+        "country": "Romania",
+        "tz": "UTC"
+    },
+    {
+        "lat": -9.0,
+        "lng": -172.0,
+        "city": null,
+        "country": "Tokelau",
+        "tz": "UTC"
+    },
+    {
+        "lat": 11.51,
+        "lng": -15.35,
+        "city": "Bissau",
+        "country": "Guinea-Bissau",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.28,
+        "lng": 144.44,
+        "city": "Hagatna",
+        "country": "Guam",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.37,
+        "lng": -90.31,
+        "city": "Guatemala City",
+        "country": "Guatemala",
+        "tz": "UTC"
+    },
+    {
+        "lat": 37.59,
+        "lng": 23.44,
+        "city": "Athens",
+        "country": "Greece",
+        "tz": "UTC"
+    },
+    {
+        "lat": 3.45,
+        "lng": 8.47,
+        "city": "Malabo",
+        "country": "Equatorial Guinea",
+        "tz": "UTC"
+    },
+    {
+        "lat": 35.41,
+        "lng": 139.45,
+        "city": "Tokyo",
+        "country": "Japan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.48,
+        "lng": -58.1,
+        "city": "Georgetown",
+        "country": "Guyana",
+        "tz": "UTC"
+    },
+    {
+        "lat": 49.27,
+        "lng": -2.32,
+        "city": "Saint Peter Port",
+        "country": "Guernsey",
+        "tz": "UTC"
+    },
+    {
+        "lat": 41.43,
+        "lng": 44.47,
+        "city": "T'bilisi",
+        "country": "Georgia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.03,
+        "lng": -61.45,
+        "city": "Saint George's",
+        "country": "Grenada",
+        "tz": "UTC"
+    },
+    {
+        "lat": 51.3,
+        "lng": -0.1,
+        "city": "London",
+        "country": "United Kingdom",
+        "tz": "UTC"
+    },
+    {
+        "lat": 0.23,
+        "lng": 9.27,
+        "city": "Libreville",
+        "country": "Gabon",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.42,
+        "lng": -89.12,
+        "city": "San Salvador",
+        "country": "El Salvador",
+        "tz": "UTC"
+    },
+    {
+        "lat": 9.33,
+        "lng": -13.42,
+        "city": "Conakry",
+        "country": "Guinea",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.27,
+        "lng": -16.34,
+        "city": "Banjul",
+        "country": "Gambia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 64.11,
+        "lng": -51.45,
+        "city": "Nuuk",
+        "country": "Greenland",
+        "tz": "UTC"
+    },
+    {
+        "lat": 36.08,
+        "lng": -5.21,
+        "city": "Gibraltar",
+        "country": "Gibraltar",
+        "tz": "UTC"
+    },
+    {
+        "lat": 5.33,
+        "lng": -0.13,
+        "city": "Accra",
+        "country": "Ghana",
+        "tz": "UTC"
+    },
+    {
+        "lat": 23.37,
+        "lng": 58.35,
+        "city": "Muscat",
+        "country": "Oman",
+        "tz": "UTC"
+    },
+    {
+        "lat": 36.48,
+        "lng": 10.11,
+        "city": "Tunis",
+        "country": "Tunisia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 31.57,
+        "lng": 35.56,
+        "city": "Amman",
+        "country": "Jordan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 45.48,
+        "lng": 16.0,
+        "city": "Zagreb",
+        "country": "Croatia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.32,
+        "lng": -72.2,
+        "city": "Port-au-Prince",
+        "country": "Haiti",
+        "tz": "UTC"
+    },
+    {
+        "lat": 47.3,
+        "lng": 19.05,
+        "city": "Budapest",
+        "country": "Hungary",
+        "tz": "UTC"
+    },
+    {
+        "lat": 22.15,
+        "lng": 114.1,
+        "city": "Hong Kong",
+        "country": "Hong Kong",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.06,
+        "lng": -87.13,
+        "city": "Tegucigalpa",
+        "country": "Honduras",
+        "tz": "UTC"
+    },
+    {
+        "lat": -53.06,
+        "lng": 72.31,
+        "city": null,
+        "country": "Heard Island and McDonald Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 10.3,
+        "lng": -66.56,
+        "city": "Caracas",
+        "country": "Venezuela",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.28,
+        "lng": -66.07,
+        "city": "San Juan",
+        "country": "Puerto Rico",
+        "tz": "UTC"
+    },
+    {
+        "lat": 31.25,
+        "lng": 34.2,
+        "city": null,
+        "country": "Palestinian Territory",
+        "tz": "UTC"
+    },
+    {
+        "lat": 7.29,
+        "lng": 134.38,
+        "city": "Melekeok",
+        "country": "Palau",
+        "tz": "UTC"
+    },
+    {
+        "lat": 38.43,
+        "lng": -9.08,
+        "city": "Lisbon",
+        "country": "Portugal",
+        "tz": "UTC"
+    },
+    {
+        "lat": 78.13,
+        "lng": 15.33,
+        "city": "Longyearbyen",
+        "country": "Svalbard",
+        "tz": "UTC"
+    },
+    {
+        "lat": -25.16,
+        "lng": -57.4,
+        "city": "Asuncion",
+        "country": "Paraguay",
+        "tz": "UTC"
+    },
+    {
+        "lat": 33.2,
+        "lng": 44.23,
+        "city": "Baghdad",
+        "country": "Iraq",
+        "tz": "UTC"
+    },
+    {
+        "lat": 8.58,
+        "lng": -79.32,
+        "city": "Panama City",
+        "country": "Panama",
+        "tz": "UTC"
+    },
+    {
+        "lat": -17.32,
+        "lng": -149.34,
+        "city": "Papeete",
+        "country": "French Polynesia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -9.3,
+        "lng": 147.1,
+        "city": "Port Moresby",
+        "country": "Papua New Guinea",
+        "tz": "UTC"
+    },
+    {
+        "lat": -12.03,
+        "lng": -77.03,
+        "city": "Lima",
+        "country": "Peru",
+        "tz": "UTC"
+    },
+    {
+        "lat": 33.42,
+        "lng": 73.1,
+        "city": "Islamabad",
+        "country": "Pakistan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.35,
+        "lng": 121.0,
+        "city": "Manila",
+        "country": "Philippines",
+        "tz": "UTC"
+    },
+    {
+        "lat": -25.04,
+        "lng": -130.05,
+        "city": "Adamstown",
+        "country": "Pitcairn",
+        "tz": "UTC"
+    },
+    {
+        "lat": 52.15,
+        "lng": 21.0,
+        "city": "Warsaw",
+        "country": "Poland",
+        "tz": "UTC"
+    },
+    {
+        "lat": 46.46,
+        "lng": -56.11,
+        "city": "Saint-Pierre",
+        "country": "Saint Pierre and Miquelon",
+        "tz": "UTC"
+    },
+    {
+        "lat": -15.25,
+        "lng": 28.17,
+        "city": "Lusaka",
+        "country": "Zambia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 24.3,
+        "lng": -13.0,
+        "city": null,
+        "country": "Western Sahara",
+        "tz": "UTC"
+    },
+    {
+        "lat": 59.26,
+        "lng": 24.43,
+        "city": "Tallinn",
+        "country": "Estonia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 30.03,
+        "lng": 31.15,
+        "city": "Cairo",
+        "country": "Egypt",
+        "tz": "UTC"
+    },
+    {
+        "lat": -25.42,
+        "lng": 28.13,
+        "city": "Pretoria",
+        "country": "South Africa",
+        "tz": "UTC"
+    },
+    {
+        "lat": -0.13,
+        "lng": -78.3,
+        "city": "Quito",
+        "country": "Ecuador",
+        "tz": "UTC"
+    },
+    {
+        "lat": 41.54,
+        "lng": 12.29,
+        "city": "Rome",
+        "country": "Italy",
+        "tz": "UTC"
+    },
+    {
+        "lat": 21.02,
+        "lng": 105.51,
+        "city": "Hanoi",
+        "country": "Vietnam",
+        "tz": "UTC"
+    },
+    {
+        "lat": -9.26,
+        "lng": 159.57,
+        "city": "Honiara",
+        "country": "Solomon Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 50.1021,
+        "lng": 9.9,
+        "city": null,
+        "country": "European Union",
+        "tz": "UTC"
+    },
+    {
+        "lat": 9.02,
+        "lng": 38.42,
+        "city": "Addis Ababa",
+        "country": "Ethiopia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 2.04,
+        "lng": 45.22,
+        "city": "Mogadishu",
+        "country": "Somalia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -17.5,
+        "lng": 31.03,
+        "city": "Harare",
+        "country": "Zimbabwe",
+        "tz": "UTC"
+    },
+    {
+        "lat": 24.38,
+        "lng": 46.43,
+        "city": "Riyadh",
+        "country": "Saudi Arabia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 40.24,
+        "lng": -3.41,
+        "city": "Madrid",
+        "country": "Spain",
+        "tz": "UTC"
+    },
+    {
+        "lat": 15.2,
+        "lng": 38.56,
+        "city": "Asmara",
+        "country": "Eritrea",
+        "tz": "UTC"
+    },
+    {
+        "lat": 42.26,
+        "lng": 19.16,
+        "city": "Podgorica",
+        "country": "Montenegro",
+        "tz": "UTC"
+    },
+    {
+        "lat": 47.0,
+        "lng": 28.51,
+        "city": "Chisinau",
+        "country": "Moldova",
+        "tz": "UTC"
+    },
+    {
+        "lat": -18.55,
+        "lng": 47.31,
+        "city": "Antananarivo",
+        "country": "Madagascar",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.04,
+        "lng": -63.05,
+        "city": "Marigot",
+        "country": "Saint Martin",
+        "tz": "UTC"
+    },
+    {
+        "lat": 34.01,
+        "lng": -6.49,
+        "city": "Rabat",
+        "country": "Morocco",
+        "tz": "UTC"
+    },
+    {
+        "lat": 43.44,
+        "lng": 7.25,
+        "city": "Monaco",
+        "country": "Monaco",
+        "tz": "UTC"
+    },
+    {
+        "lat": 41.2,
+        "lng": 69.18,
+        "city": "Tashkent",
+        "country": "Uzbekistan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 16.48,
+        "lng": 96.09,
+        "city": "Rangoon",
+        "country": "Myanmar",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.39,
+        "lng": -8.0,
+        "city": "Bamako",
+        "country": "Mali",
+        "tz": "UTC"
+    },
+    {
+        "lat": 22.1,
+        "lng": 113.33,
+        "city": null,
+        "country": "Macao",
+        "tz": "UTC"
+    },
+    {
+        "lat": 47.55,
+        "lng": 106.55,
+        "city": "Ulaanbaatar",
+        "country": "Mongolia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 7.06,
+        "lng": 171.23,
+        "city": "Majuro",
+        "country": "Marshall Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 42.0,
+        "lng": 21.26,
+        "city": "Skopje",
+        "country": "Macedonia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -20.09,
+        "lng": 57.29,
+        "city": "Port Louis",
+        "country": "Mauritius",
+        "tz": "UTC"
+    },
+    {
+        "lat": 35.53,
+        "lng": 14.3,
+        "city": "Valletta",
+        "country": "Malta",
+        "tz": "UTC"
+    },
+    {
+        "lat": -13.59,
+        "lng": 33.47,
+        "city": "Lilongwe",
+        "country": "Malawi",
+        "tz": "UTC"
+    },
+    {
+        "lat": 4.1,
+        "lng": 73.3,
+        "city": "Male",
+        "country": "Maldives",
+        "tz": "UTC"
+    },
+    {
+        "lat": 15.12,
+        "lng": 145.45,
+        "city": "Saipan",
+        "country": "Northern Mariana Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 16.42,
+        "lng": -62.13,
+        "city": "Plymouth",
+        "country": "Montserrat",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.07,
+        "lng": -16.02,
+        "city": "Nouakchott",
+        "country": "Mauritania",
+        "tz": "UTC"
+    },
+    {
+        "lat": 54.09,
+        "lng": -4.29,
+        "city": "Douglas",
+        "country": "Isle of Man",
+        "tz": "UTC"
+    },
+    {
+        "lat": 0.19,
+        "lng": 32.25,
+        "city": "Kampala",
+        "country": "Uganda",
+        "tz": "UTC"
+    },
+    {
+        "lat": 3.1,
+        "lng": 101.42,
+        "city": "Kuala Lumpur",
+        "country": "Malaysia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 19.26,
+        "lng": -99.08,
+        "city": "Mexico City",
+        "country": "Mexico",
+        "tz": "UTC"
+    },
+    {
+        "lat": 31.46,
+        "lng": 35.14,
+        "city": "Jerusalem",
+        "country": "Israel",
+        "tz": "UTC"
+    },
+    {
+        "lat": 48.52,
+        "lng": 2.2,
+        "city": "Paris",
+        "country": "France",
+        "tz": "UTC"
+    },
+    {
+        "lat": -6.0,
+        "lng": 71.3,
+        "city": null,
+        "country": "British Indian Ocean Territory",
+        "tz": "UTC"
+    },
+    {
+        "lat": -15.56,
+        "lng": -5.44,
+        "city": "Jamestown",
+        "country": "Saint Helena Ascension and Tristan da Cunha",
+        "tz": "UTC"
+    },
+    {
+        "lat": 60.1,
+        "lng": 24.56,
+        "city": "Helsinki",
+        "country": "Finland",
+        "tz": "UTC"
+    },
+    {
+        "lat": -18.08,
+        "lng": 178.25,
+        "city": "Suva",
+        "country": "Fiji",
+        "tz": "UTC"
+    },
+    {
+        "lat": -51.42,
+        "lng": -57.51,
+        "city": "Stanley",
+        "country": "Falkland Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.55,
+        "lng": 158.09,
+        "city": "Palikir",
+        "country": "Micronesia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 62.01,
+        "lng": -6.46,
+        "city": "Torshavn",
+        "country": "Faroe Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.09,
+        "lng": -86.17,
+        "city": "Managua",
+        "country": "Nicaragua",
+        "tz": "UTC"
+    },
+    {
+        "lat": 52.23,
+        "lng": 4.54,
+        "city": "Amsterdam",
+        "country": "Netherlands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 59.55,
+        "lng": 10.45,
+        "city": "Oslo",
+        "country": "Norway",
+        "tz": "UTC"
+    },
+    {
+        "lat": -22.34,
+        "lng": 17.05,
+        "city": "Windhoek",
+        "country": "Namibia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -17.44,
+        "lng": 168.19,
+        "city": "Port-Vila",
+        "country": "Vanuatu",
+        "tz": "UTC"
+    },
+    {
+        "lat": -22.16,
+        "lng": 166.27,
+        "city": "Noumea",
+        "country": "New Caledonia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.31,
+        "lng": 2.07,
+        "city": "Niamey",
+        "country": "Niger",
+        "tz": "UTC"
+    },
+    {
+        "lat": -29.03,
+        "lng": 167.58,
+        "city": "Kingston",
+        "country": "Norfolk Island",
+        "tz": "UTC"
+    },
+    {
+        "lat": 9.05,
+        "lng": 7.32,
+        "city": "Abuja",
+        "country": "Nigeria",
+        "tz": "UTC"
+    },
+    {
+        "lat": -41.28,
+        "lng": 174.51,
+        "city": "Wellington",
+        "country": "New Zealand",
+        "tz": "UTC"
+    },
+    {
+        "lat": 27.43,
+        "lng": 85.19,
+        "city": "Kathmandu",
+        "country": "Nepal",
+        "tz": "UTC"
+    },
+    {
+        "lat": -0.32,
+        "lng": 166.55,
+        "city": null,
+        "country": "Nauru",
+        "tz": "UTC"
+    },
+    {
+        "lat": -19.01,
+        "lng": -169.55,
+        "city": "Alofi",
+        "country": "Niue",
+        "tz": "UTC"
+    },
+    {
+        "lat": -21.12,
+        "lng": -159.46,
+        "city": "Avarua",
+        "country": "Cook Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.49,
+        "lng": -5.17,
+        "city": "Yamoussoukro",
+        "country": "Ivory Coast",
+        "tz": "UTC"
+    },
+    {
+        "lat": 46.57,
+        "lng": 7.26,
+        "city": "Bern",
+        "country": "Switzerland",
+        "tz": "UTC"
+    },
+    {
+        "lat": 4.36,
+        "lng": -74.05,
+        "city": "Bogota",
+        "country": "Colombia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 39.55,
+        "lng": 116.23,
+        "city": "Beijing",
+        "country": "China",
+        "tz": "UTC"
+    },
+    {
+        "lat": 3.52,
+        "lng": 11.31,
+        "city": "Yaounde",
+        "country": "Cameroon",
+        "tz": "UTC"
+    },
+    {
+        "lat": -33.27,
+        "lng": -70.4,
+        "city": "Santiago",
+        "country": "Chile",
+        "tz": "UTC"
+    },
+    {
+        "lat": -12.1,
+        "lng": 96.5,
+        "city": "West Island",
+        "country": "Cocos Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 45.25,
+        "lng": -75.42,
+        "city": "Ottawa",
+        "country": "Canada",
+        "tz": "UTC"
+    },
+    {
+        "lat": -4.15,
+        "lng": 15.17,
+        "city": "Brazzaville",
+        "country": "Congo Republic",
+        "tz": "UTC"
+    },
+    {
+        "lat": 4.22,
+        "lng": 18.35,
+        "city": "Bangui",
+        "country": "Central African Republic",
+        "tz": "UTC"
+    },
+    {
+        "lat": -4.19,
+        "lng": 15.18,
+        "city": "Kinshasa",
+        "country": "Congo Democratic Republic",
+        "tz": "UTC"
+    },
+    {
+        "lat": 50.05,
+        "lng": 14.28,
+        "city": "Prague",
+        "country": "Czech Republic",
+        "tz": "UTC"
+    },
+    {
+        "lat": 35.1,
+        "lng": 33.22,
+        "city": "Nicosia",
+        "country": "Cyprus",
+        "tz": "UTC"
+    },
+    {
+        "lat": -10.25,
+        "lng": 105.43,
+        "city": "The Settlement",
+        "country": "Christmas Island",
+        "tz": "UTC"
+    },
+    {
+        "lat": 9.56,
+        "lng": -84.05,
+        "city": "San Jose",
+        "country": "Costa Rica",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.55,
+        "lng": -23.31,
+        "city": "Praia",
+        "country": "Cape Verde",
+        "tz": "UTC"
+    },
+    {
+        "lat": 23.07,
+        "lng": -82.21,
+        "city": "Havana",
+        "country": "Cuba",
+        "tz": "UTC"
+    },
+    {
+        "lat": -26.18,
+        "lng": 31.06,
+        "city": "Mbabane",
+        "country": "Swaziland",
+        "tz": "UTC"
+    },
+    {
+        "lat": 33.3,
+        "lng": 36.18,
+        "city": "Damascus",
+        "country": "Syria",
+        "tz": "UTC"
+    },
+    {
+        "lat": 42.52,
+        "lng": 74.36,
+        "city": "Bishkek",
+        "country": "Kyrgyzstan",
+        "tz": "UTC"
+    },
+    {
+        "lat": -1.17,
+        "lng": 36.49,
+        "city": "Nairobi",
+        "country": "Kenya",
+        "tz": "UTC"
+    },
+    {
+        "lat": 5.5,
+        "lng": -55.1,
+        "city": "Paramaribo",
+        "country": "Suriname",
+        "tz": "UTC"
+    },
+    {
+        "lat": 1.19,
+        "lng": 172.58,
+        "city": "Tarawa",
+        "country": "Kiribati",
+        "tz": "UTC"
+    },
+    {
+        "lat": 11.33,
+        "lng": 104.55,
+        "city": "Phnom Penh",
+        "country": "Cambodia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 17.18,
+        "lng": -62.43,
+        "city": "Basseterre",
+        "country": "Saint Kitts and Nevis",
+        "tz": "UTC"
+    },
+    {
+        "lat": -11.42,
+        "lng": 43.14,
+        "city": "Moroni",
+        "country": "Comoros",
+        "tz": "UTC"
+    },
+    {
+        "lat": 0.12,
+        "lng": 6.39,
+        "city": "Sao Tome",
+        "country": "Sao Tome and Principe",
+        "tz": "UTC"
+    },
+    {
+        "lat": 48.09,
+        "lng": 17.07,
+        "city": "Bratislava",
+        "country": "Slovakia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 37.33,
+        "lng": 126.59,
+        "city": "Seoul",
+        "country": "Korea South",
+        "tz": "UTC"
+    },
+    {
+        "lat": 46.03,
+        "lng": 14.31,
+        "city": "Ljubljana",
+        "country": "Slovenia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 39.01,
+        "lng": 125.45,
+        "city": "Pyongyang",
+        "country": "Korea North",
+        "tz": "UTC"
+    },
+    {
+        "lat": 29.22,
+        "lng": 47.58,
+        "city": "Kuwait City",
+        "country": "Kuwait",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.4,
+        "lng": -17.26,
+        "city": "Dakar",
+        "country": "Senegal",
+        "tz": "UTC"
+    },
+    {
+        "lat": 43.56,
+        "lng": 12.25,
+        "city": "San Marino",
+        "country": "San Marino",
+        "tz": "UTC"
+    },
+    {
+        "lat": 8.3,
+        "lng": -13.15,
+        "city": "Freetown",
+        "country": "Sierra Leone",
+        "tz": "UTC"
+    },
+    {
+        "lat": -4.38,
+        "lng": 55.27,
+        "city": "Victoria",
+        "country": "Seychelles",
+        "tz": "UTC"
+    },
+    {
+        "lat": 51.1,
+        "lng": 71.25,
+        "city": "Astana",
+        "country": "Kazakhstan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 19.18,
+        "lng": -81.23,
+        "city": "George Town",
+        "country": "Cayman Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 1.17,
+        "lng": 103.51,
+        "city": "Singapore",
+        "country": "Singapore",
+        "tz": "UTC"
+    },
+    {
+        "lat": 59.2,
+        "lng": 18.03,
+        "city": "Stockholm",
+        "country": "Sweden",
+        "tz": "UTC"
+    },
+    {
+        "lat": 15.36,
+        "lng": 32.32,
+        "city": "Khartoum",
+        "country": "Sudan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.28,
+        "lng": -69.54,
+        "city": "Santo Domingo",
+        "country": "Dominican Republic",
+        "tz": "UTC"
+    },
+    {
+        "lat": 15.18,
+        "lng": -61.24,
+        "city": "Roseau",
+        "country": "Dominica",
+        "tz": "UTC"
+    },
+    {
+        "lat": 11.35,
+        "lng": 43.09,
+        "city": "Djibouti",
+        "country": "Djibouti",
+        "tz": "UTC"
+    },
+    {
+        "lat": 55.4,
+        "lng": 12.35,
+        "city": "Copenhagen",
+        "country": "Denmark",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.27,
+        "lng": -64.37,
+        "city": "Road Town",
+        "country": "British Virgin Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 52.31,
+        "lng": 13.24,
+        "city": "Berlin",
+        "country": "Germany",
+        "tz": "UTC"
+    },
+    {
+        "lat": 15.21,
+        "lng": 44.12,
+        "city": "Sanaa",
+        "country": "Yemen",
+        "tz": "UTC"
+    },
+    {
+        "lat": 36.45,
+        "lng": 3.03,
+        "city": "Algiers",
+        "country": "Algeria",
+        "tz": "UTC"
+    },
+    {
+        "lat": 38.53,
+        "lng": -77.02,
+        "city": "Washington, DC",
+        "country": "United States",
+        "tz": "UTC"
+    },
+    {
+        "lat": -34.53,
+        "lng": -56.11,
+        "city": "Montevideo",
+        "country": "Uruguay",
+        "tz": "UTC"
+    },
+    {
+        "lat": -12.46,
+        "lng": 45.13,
+        "city": "Mamoudzou",
+        "country": "Mayotte",
+        "tz": "UTC"
+    },
+    {
+        "lat": 33.52,
+        "lng": 35.3,
+        "city": "Beirut",
+        "country": "Lebanon",
+        "tz": "UTC"
+    },
+    {
+        "lat": 14.01,
+        "lng": -61.0,
+        "city": "Castries",
+        "country": "Saint Lucia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 17.58,
+        "lng": 102.36,
+        "city": "Vientiane",
+        "country": "Laos",
+        "tz": "UTC"
+    },
+    {
+        "lat": -8.3,
+        "lng": 179.12,
+        "city": "Funafuti",
+        "country": "Tuvalu",
+        "tz": "UTC"
+    },
+    {
+        "lat": 25.03,
+        "lng": 121.3,
+        "city": "Taipei",
+        "country": "Taiwan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 10.39,
+        "lng": -61.31,
+        "city": "Port-of-Spain",
+        "country": "Trinidad and Tobago",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.56,
+        "lng": 79.51,
+        "city": "Colombo",
+        "country": "Sri Lanka",
+        "tz": "UTC"
+    },
+    {
+        "lat": 47.08,
+        "lng": 9.31,
+        "city": "Vaduz",
+        "country": "Liechtenstein",
+        "tz": "UTC"
+    },
+    {
+        "lat": 56.57,
+        "lng": 24.06,
+        "city": "Riga",
+        "country": "Latvia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -21.08,
+        "lng": -175.12,
+        "city": "Nuku'alofa",
+        "country": "Tonga",
+        "tz": "UTC"
+    },
+    {
+        "lat": 54.41,
+        "lng": 25.19,
+        "city": "Vilnius",
+        "country": "Lithuania",
+        "tz": "UTC"
+    },
+    {
+        "lat": 49.36,
+        "lng": 6.07,
+        "city": "Luxembourg",
+        "country": "Luxembourg",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.18,
+        "lng": -10.48,
+        "city": "Monrovia",
+        "country": "Liberia",
+        "tz": "UTC"
+    },
+    {
+        "lat": -29.19,
+        "lng": 27.29,
+        "city": "Maseru",
+        "country": "Lesotho",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.45,
+        "lng": 100.31,
+        "city": "Bangkok",
+        "country": "Thailand",
+        "tz": "UTC"
+    },
+    {
+        "lat": -37.5,
+        "lng": 77.32,
+        "city": null,
+        "country": "French Southern Territories",
+        "tz": "UTC"
+    },
+    {
+        "lat": 6.08,
+        "lng": 1.13,
+        "city": "Lome",
+        "country": "Togo",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.06,
+        "lng": 15.02,
+        "city": "N'Djamena",
+        "country": "Chad",
+        "tz": "UTC"
+    },
+    {
+        "lat": 21.28,
+        "lng": -71.08,
+        "city": "Grand Turk",
+        "country": "Turks and Caicos Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 32.53,
+        "lng": 13.1,
+        "city": "Tripoli",
+        "country": "Libya",
+        "tz": "UTC"
+    },
+    {
+        "lat": 41.54,
+        "lng": 12.27,
+        "city": "Vatican City",
+        "country": "Holy See",
+        "tz": "UTC"
+    },
+    {
+        "lat": 13.09,
+        "lng": -61.14,
+        "city": "Kingstown",
+        "country": "Saint Vincent and the Grenadines",
+        "tz": "UTC"
+    },
+    {
+        "lat": 24.28,
+        "lng": 54.22,
+        "city": "Abu Dhabi",
+        "country": "United Arab Emirates",
+        "tz": "UTC"
+    },
+    {
+        "lat": 42.3,
+        "lng": 1.31,
+        "city": "Andorra la Vella",
+        "country": "Andorra",
+        "tz": "UTC"
+    },
+    {
+        "lat": 17.07,
+        "lng": -61.51,
+        "city": "Saint John's",
+        "country": "Antigua and Barbuda",
+        "tz": "UTC"
+    },
+    {
+        "lat": 34.31,
+        "lng": 69.11,
+        "city": "Kabul",
+        "country": "Afghanistan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.13,
+        "lng": -63.03,
+        "city": "The Valley",
+        "country": "Anguilla",
+        "tz": "UTC"
+    },
+    {
+        "lat": 18.21,
+        "lng": -64.56,
+        "city": "Charlotte Amalie",
+        "country": "Virgin Islands",
+        "tz": "UTC"
+    },
+    {
+        "lat": 64.09,
+        "lng": -21.57,
+        "city": "Reykjavik",
+        "country": "Iceland",
+        "tz": "UTC"
+    },
+    {
+        "lat": 35.4,
+        "lng": 51.25,
+        "city": "Tehran",
+        "country": "Iran",
+        "tz": "UTC"
+    },
+    {
+        "lat": 40.1,
+        "lng": 44.3,
+        "city": "Yerevan",
+        "country": "Armenia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 41.19,
+        "lng": 19.49,
+        "city": "Tirana",
+        "country": "Albania",
+        "tz": "UTC"
+    },
+    {
+        "lat": -8.5,
+        "lng": 13.14,
+        "city": "Luanda",
+        "country": "Angola",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.06,
+        "lng": -68.56,
+        "city": "Willemstad",
+        "country": "Netherlands Antilles",
+        "tz": "UTC"
+    },
+    {
+        "lat": -90.0,
+        "lng": 0.0,
+        "city": null,
+        "country": "Antarctica",
+        "tz": "UTC"
+    },
+    {
+        "lat": 0.0,
+        "lng": 0.0,
+        "city": null,
+        "country": "Asia &amp; Pacific",
+        "tz": "UTC"
+    },
+    {
+        "lat": -14.16,
+        "lng": -170.42,
+        "city": "Pago Pago",
+        "country": "American Samoa",
+        "tz": "UTC"
+    },
+    {
+        "lat": -34.36,
+        "lng": -58.4,
+        "city": "Buenos Aires",
+        "country": "Argentina",
+        "tz": "UTC"
+    },
+    {
+        "lat": -35.17,
+        "lng": 149.13,
+        "city": "Canberra",
+        "country": "Australia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 48.12,
+        "lng": 16.22,
+        "city": "Vienna",
+        "country": "Austria",
+        "tz": "UTC"
+    },
+    {
+        "lat": 12.31,
+        "lng": -70.02,
+        "city": "Oranjestad",
+        "country": "Aruba",
+        "tz": "UTC"
+    },
+    {
+        "lat": 28.36,
+        "lng": 77.12,
+        "city": "New Delhi",
+        "country": "India",
+        "tz": "UTC"
+    },
+    {
+        "lat": -6.48,
+        "lng": 39.17,
+        "city": "Dar es Salaam",
+        "country": "Tanzania",
+        "tz": "UTC"
+    },
+    {
+        "lat": 40.23,
+        "lng": 49.52,
+        "city": "Baku",
+        "country": "Azerbaijan",
+        "tz": "UTC"
+    },
+    {
+        "lat": 53.19,
+        "lng": -6.14,
+        "city": "Dublin",
+        "country": "Ireland",
+        "tz": "UTC"
+    },
+    {
+        "lat": -6.1,
+        "lng": 106.49,
+        "city": "Jakarta",
+        "country": "Indonesia",
+        "tz": "UTC"
+    },
+    {
+        "lat": 50.441,
+        "lng": 30.554,
+        "city": "Kiew",
+        "country": "Ukraine",
+        "tz": "UTC"
+    },
+    {
+        "lat": 25.17,
+        "lng": 51.32,
+        "city": "Doha",
+        "country": "Qatar",
+        "tz": "UTC"
+    },
+    {
+        "lat": -25.57,
+        "lng": 32.35,
+        "city": "Maputo",
+        "country": "Mozambique",
+        "tz": "UTC"
+    }
+]
