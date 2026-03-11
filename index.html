@@ -1,0 +1,3551 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anlık Ezan Vakti –</title>
+    <meta name="description"
+        content="Dünya üzerinde anlık olarak ezan okunan yerleri 3D küre haritasında gösteren interaktif temalı uygulama." />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --brand: #00d2ff;
+            --brand-dark: #3a7bd5;
+            --accent: #00e5ff;
+            --accent2: #00b4d8;
+            --fajr: #7b61ff;
+            --dhuhr: #ffcc00;
+            --asr: #ff8c42;
+            --maghrib: #ff4f6d;
+            --isha: #4fc3f7;
+            --bg: #02050a;
+            --panel: rgba(2, 8, 16, 0.85);
+            --border: rgba(0, 229, 255, 0.2);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            font-family: 'Inter', sans-serif;
+            color: #e8e8f0;
+            overflow: hidden;
+            touch-action: none;
+            /* Mobilde haritayı kaydırırken ekranın kaymasını engeller */
+        }
+
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* ── Top Bar ── */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            background: linear-gradient(180deg, rgba(2, 8, 16, 0.95) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            overflow: hidden;
+            border: 2px solid var(--accent);
+            background: #fff;
+        }
+
+        .logo-icon img {
+            width: 106%;
+            height: 106%;
+            object-fit: cover;
+        }
+
+        .logo-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            text-transform: uppercase;
+        }
+
+        .logo-text p {
+            font-size: .80rem;
+            color: rgba(255, 255, 255, .8);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Legend ── */
+        #legend {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 7px 16px;
+            backdrop-filter: blur(12px);
+            font-size: .8rem;
+            font-weight: 500;
+            transition: all .3s;
+        }
+
+        .leg-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .act {
+            border-color: rgba(245, 200, 66, .45);
+            background: rgba(245, 200, 66, .08);
+        }
+
+        /* ── Info Panel ── */
+        #info-panel {
+            position: fixed;
+            right: 20px;
+            top: 80px;
+            width: 270px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 10;
+            box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);
+            /* Dünyaya uygun mavi/cam yansıması */
+        }
+
+        #info-panel h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            font-size: .82rem;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, .5);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* ── Glow pulse ── */
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .6;
+                transform: scale(1.3);
+            }
+        }
+
+        /* ── Loading screen ── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 1s ease;
+        }
+
+        #loading .ld-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(0, 229, 255, 0.5);
+            animation: pulseGlow 1.4s infinite;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+
+        #loading .ld-icon img {
+            width: 106%;
+            height: 106%;
+            object-fit: cover;
+        }
+
+        #loading .ld-text {
+            font-size: 1.1rem;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--accent);
+            margin-top: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #loading .ld-sub {
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        #loading .ld-bar {
+            margin-top: 24px;
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #loading .ld-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--brand-dark), var(--accent));
+            border-radius: 3px;
+            transition: width .3s;
+        }
+
+        /* ── Tooltip ── */
+        #tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(10, 22, 45, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: .8rem;
+            max-width: 200px;
+            z-index: 20;
+            display: none;
+            backdrop-filter: blur(16px);
+        }
+
+        #tooltip .tt-city {
+            font-weight: 700;
+            font-size: .9rem;
+            color: #fff;
+        }
+
+        #tooltip .tt-country {
+            color: rgba(255, 255, 255, .45);
+            font-size: .72rem;
+            margin-bottom: 8px;
+        }
+
+        #tooltip .tt-prayer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #tooltip .tt-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        #tooltip .tt-name {
+            font-weight: 600;
+        }
+
+        #tooltip .tt-time {
+            color: rgba(255, 255, 255, .5);
+            font-size: .72rem;
+            margin-top: 4px;
+        }
+
+        #tooltip .tt-next {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+        }
+
+        #tooltip .tt-hint {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            display: none;
+        }
+
+        #mobile-stats-btn {
+            display: none;
+            background: linear-gradient(135deg, var(--brand-dark), var(--accent));
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0, 229, 255, 0.3);
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+        }
+
+        .close-stats-btn {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        #info-panel-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        /* ── Help Button & Modal ── */
+        .help-btn {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        #help-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #help-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -45%) scale(0.95);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(10, 18, 30, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            z-index: 2001;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 255, 0.05);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #help-modal.active,
+        #help-modal-overlay.active {
+            display: block;
+        }
+
+        #help-modal.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #help-modal-overlay.show {
+            opacity: 1;
+        }
+
+        #help-modal .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        #help-modal .close-btn:hover {
+            color: var(--maghrib);
+        }
+
+        #help-modal h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 10px;
+        }
+
+        #help-modal p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+        }
+
+        #help-modal ul {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+
+        #help-modal li {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        #help-modal li::before {
+            content: '▹';
+            color: var(--brand);
+            font-weight: bold;
+        }
+
+        /* ── Mobile Responsiveness ── */
+        @media (max-width: 768px) {
+            #mobile-stats-btn {
+                display: block;
+            }
+
+            .close-stats-btn {
+                display: block;
+            }
+
+            #topbar {
+                padding: 6px 10px;
+                background: linear-gradient(180deg, rgba(2, 8, 16, 0.95) 0%, rgba(2, 8, 16, 0.3) 80%, transparent 100%);
+            }
+
+            .logo-icon {
+                width: 28px;
+                height: 28px;
+                border-width: 1px;
+            }
+
+            .logo-icon svg {
+                width: 16px;
+                height: 16px;
+                stroke-width: 2px;
+            }
+
+            .logo-text h1 {
+                font-size: 0.9.5rem;
+                letter-spacing: 0;
+            }
+
+            .logo-text p {
+                font-size: 0.6rem;
+            }
+
+            #info-panel {
+                display: none;
+                /* Mobilde varsayılan olarak gizli (Popup olacak) */
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 85%;
+                max-width: 320px;
+                padding: 20px;
+                background: rgba(10, 18, 30, 0.98);
+                border-radius: 16px;
+                backdrop-filter: blur(12px);
+                border: 1px solid var(--border);
+                z-index: 1000;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            }
+
+            #info-panel.popup-active {
+                display: block;
+                /* Tıklanınca açılır */
+            }
+
+            #info-panel-overlay.popup-active {
+                display: block;
+            }
+
+            #info-panel h3 {
+                font-size: 1.05rem;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+                text-align: center;
+                border-bottom: 1px dashed var(--border);
+            }
+
+            .stat-row {
+                font-size: 0.85rem;
+                padding: 6px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, .06);
+            }
+
+            #legend {
+                bottom: 6px;
+                gap: 4px;
+                padding: 0 4px;
+                width: 100%;
+            }
+
+            .leg-item {
+                font-size: 0.55rem;
+                padding: 4px 6px;
+                border-radius: 6px;
+                background: rgba(15, 6, 8, 0.6);
+            }
+
+            .leg-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="ld-icon"><img src="logo.png" alt="Yükleniyor..."></div>
+        <div class="ld-text">Ezan Vakitleri Hesaplanıyor</div>
+        <div class="ld-sub">Dünya üzerindeki ezan vakitleri yükleniyor…</div>
+        <div class="ld-bar">
+            <div class="ld-fill" id="ld-fill"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip">
+        <div class="tt-city" id="tt-city"></div>
+        <div class="tt-country" id="tt-country"></div>
+        <div class="tt-prayer">
+            <div class="tt-dot" id="tt-dot"></div>
+            <div class="tt-name" id="tt-name"></div>
+        </div>
+        <div class="tt-time" id="tt-time"></div>
+        <div class="tt-next" id="tt-next"></div>
+        <div class="tt-hint" id="tt-click-hint">🎵 Ezan dinlemek için tıklayın</div>
+    </div>
+
+    <!-- Audio Player (Hidden) -->
+    <audio id="adhan-player" style="display:none"></audio>
+
+    <!-- Top Bar -->
+    <div id="topbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="logo.png" alt="Dünya Ezan Vakitleri Logo">
+            </div>
+            <div class="logo-text">
+                <h1>DÜNYA EZAN VAKİTLERİ</h1>
+                <p>🛰️ KÜRESEL CANLI EZAN TAKİP SİSTEMİ</p>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- Yardım Butonu -->
+            <button class="help-btn" onclick="openHelpModal()" title="Sistem Hakkında">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </button>
+            <!-- Mobil İstatistik Açma Butonu (Sadece mobilde görünür) -->
+            <div id="mobile-stats-btn" onclick="toggleMobileStats()">
+                📊 Bilgi
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel-overlay" onclick="toggleMobileStats()"></div>
+    <div id="info-panel">
+        <span class="close-stats-btn" onclick="toggleMobileStats()">&times;</span>
+        <h3>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            İSTATİSTİKLER
+        </h3>
+        <div class="stat-row">
+            <span class="stat-label">Şu an ezan okunan</span>
+            <span class="stat-value" id="stat-active" style="color:var(--accent);">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">İzlenen şehir sayısı</span>
+            <span class="stat-value" id="stat-total">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">En yoğun vakit</span>
+            <span class="stat-value" id="stat-peak">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Son güncelleme</span>
+            <span class="stat-value" id="stat-update">--</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Sonraki Ezan (TR)</span>
+            <span class="stat-value" id="stat-next-tr" style="color:var(--accent); font-weight:700;">--</span>
+        </div>
+
+        <div
+            style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border); text-align: center; font-size: 0.70rem; color: rgba(255, 255, 255, 0.45); line-height: 1.4;">
+            <div
+                style="color: var(--brand); font-weight: 500; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px;">
+                Mücahit KORKMAZ</div>
+            <div>Tüm hakları saklıdır.</div>
+            <div style="margin-top: 6px; font-size: 0.65rem;">Görüş, öneri ve bildirimleriniz için:</div>
+            <div style="display: flex; gap: 14px; justify-content: center; align-items: center; margin-top: 8px;">
+                <a href="mailto:mchtkrkmz@gmail.com" title="E-posta Gönder"
+                    style="color: var(--accent); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; justify-content: center; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(0, 229, 255, 0.2);"
+                    onmouseover="this.style.color='#fff'; this.style.background='var(--accent)'; this.style.borderColor='var(--accent)'; this.style.transform='scale(1.1)';"
+                    onmouseout="this.style.color='var(--accent)'; this.style.background='rgba(0, 229, 255, 0.1)'; this.style.borderColor='rgba(0, 229, 255, 0.2)'; this.style.transform='scale(1)';">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+                <a href="https://tr.linkedin.com/in/m%C3%BCcahit-korkmaz-515183115" target="_blank"
+                    title="LinkedIn Profili"
+                    style="color: var(--accent); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; justify-content: center; background: rgba(0, 229, 255, 0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(0, 229, 255, 0.2);"
+                    onmouseover="this.style.color='#fff'; this.style.background='var(--accent)'; this.style.borderColor='var(--accent)'; this.style.transform='scale(1.1)';"
+                    onmouseout="this.style.color='var(--accent)'; this.style.background='rgba(0, 229, 255, 0.1)'; this.style.borderColor='rgba(0, 229, 255, 0.2)'; this.style.transform='scale(1)';">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path
+                            d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+        <div class="leg-item" id="leg-fajr">
+            <div class="leg-dot" style="background:#7b61ff;box-shadow:0 0 6px #7b61ff"></div>
+            <span>Sabah (Fajr)</span>
+        </div>
+        <div class="leg-item" id="leg-dhuhr">
+            <div class="leg-dot" style="background:#ffcc00;box-shadow:0 0 6px #ffcc00"></div>
+            <span>Öğle (Zuhr)</span>
+        </div>
+        <div class="leg-item" id="leg-asr">
+            <div class="leg-dot" style="background:#ff8c42;box-shadow:0 0 6px #ff8c42"></div>
+            <span>İkindi (Asr)</span>
+        </div>
+        <div class="leg-item" id="leg-maghrib">
+            <div class="leg-dot" style="background:#ff4f6d;box-shadow:0 0 6px #ff4f6d"></div>
+            <span>Akşam (Maghrib)</span>
+        </div>
+        <div class="leg-item" id="leg-isha">
+            <div class="leg-dot" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></div>
+            <span>Yatsı (Isha)</span>
+        </div>
+    </div>
+
+    <!-- Help / Info Modal -->
+    <div id="help-modal-overlay" onclick="closeHelpModal()"></div>
+    <div id="help-modal">
+        <svg class="close-btn" onclick="closeHelpModal()" viewBox="0 0 24 24" width="24" height="24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <h2>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            SİSTEM HAKKINDA
+        </h2>
+        <p>Bu uygulama, dünya genelindeki 300'den fazla şehirde (Türkiye'nin tüm illeri ve yüzlerce dünya başkenti) ezan
+            vakitlerini anlık olarak 3 boyutlu interaktif bir küre üzerinde takip etmenizi sağlar.</p>
+        <ul>
+            <li><strong>Canlı Takip:</strong> Haritada parlayan ve büyüyen işaretçiler, o an aktif olarak ezan
+                okunduğunu temsil eder.</li>
+            <li><strong>Sıradaki Vakit:</strong> Sağ taraftaki istatistikler panelinden, İstanbul baz alınarak Türkiye
+                için bir sonraki ezan vaktine ne kadar kaldığını saniye saniye takip edebilirsiniz.</li>
+            <li><strong>Sesli Uyarı (Etkileşim):</strong> Haritada ezan okunan (parlayan) herhangi bir şehre
+                tıkladığınızda o vaktin orijinal ezan dinletisi otomatik olarak başlar.</li>
+        </ul>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-bottom: 0;">Hesaplamalar <em>Adhan.js</em>
+            kullanılarak Türkiye Diyanet İşleri Başkanlığı verilerine uygun parametrelerle çevrimdışı ve lokal olarak
+            yapılmaktadır.</p>
+    </div>
+
+    <!-- Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Adhan.js (prayer time calculations) -->
+    <script src="https://cdn.jsdelivr.net/npm/adhan@4.4.3/lib/bundles/adhan.umd.min.js"></script>
+
+    <script>
+        // ─────────────────────────────────────────────
+        //  CITY DATABASE  (lat, lng, city, country, tz)
+        // ─────────────────────────────────────────────
+        const CITIES = [
+            {
+                "lat": 36.9914,
+                "lng": 35.3308,
+                "city": "adana",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.7636,
+                "lng": 38.2773,
+                "city": "adıyaman",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.7569,
+                "lng": 30.5387,
+                "city": "afyonkarahisar",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.7191,
+                "lng": 43.0506,
+                "city": "ağrı",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.6565,
+                "lng": 35.8373,
+                "city": "amasya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.9334,
+                "lng": 32.8597,
+                "city": "ankara",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 36.8969,
+                "lng": 30.7133,
+                "city": "antalya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.1809,
+                "lng": 41.8208,
+                "city": "artvin",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.838,
+                "lng": 27.8456,
+                "city": "aydın",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.6533,
+                "lng": 27.8903,
+                "city": "balıkesir",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.1426,
+                "lng": 29.9793,
+                "city": "bilecik",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.8855,
+                "lng": 40.4966,
+                "city": "bingöl",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.4006,
+                "lng": 42.1095,
+                "city": "bitlis",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.7325,
+                "lng": 31.6082,
+                "city": "bolu",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.7183,
+                "lng": 30.2823,
+                "city": "burdur",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.1885,
+                "lng": 29.061,
+                "city": "bursa",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.1467,
+                "lng": 26.4086,
+                "city": "çanakkale",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.6002,
+                "lng": 33.6162,
+                "city": "çankırı",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.5499,
+                "lng": 34.9537,
+                "city": "çorum",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.783,
+                "lng": 29.0963,
+                "city": "denizli",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.925,
+                "lng": 40.211,
+                "city": "diyarbakır",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.6771,
+                "lng": 26.5557,
+                "city": "edirne",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.6748,
+                "lng": 39.2225,
+                "city": "elazığ",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.7468,
+                "lng": 39.4911,
+                "city": "erzincan",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.9055,
+                "lng": 41.2658,
+                "city": "erzurum",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.7667,
+                "lng": 30.5256,
+                "city": "eskişehir",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.066,
+                "lng": 37.3781,
+                "city": "gaziantep",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.9175,
+                "lng": 38.3927,
+                "city": "giresun",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.4608,
+                "lng": 39.4803,
+                "city": "gümüşhane",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.5774,
+                "lng": 43.7368,
+                "city": "hakkari",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 36.2023,
+                "lng": 36.1613,
+                "city": "hatay",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.7626,
+                "lng": 30.5537,
+                "city": "ısparta",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 36.8121,
+                "lng": 34.6415,
+                "city": "mersin",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.0082,
+                "lng": 28.9784,
+                "city": "istanbul",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.4237,
+                "lng": 27.1428,
+                "city": "izmir",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.6013,
+                "lng": 43.0975,
+                "city": "kars",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.3766,
+                "lng": 33.7765,
+                "city": "kastamonu",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.7205,
+                "lng": 35.4826,
+                "city": "kayseri",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.7355,
+                "lng": 27.2244,
+                "city": "kırklareli",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.1461,
+                "lng": 34.1595,
+                "city": "kırşehir",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.7654,
+                "lng": 29.9408,
+                "city": "kocaeli",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.8746,
+                "lng": 32.4932,
+                "city": "konya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.42,
+                "lng": 29.9857,
+                "city": "kütahya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.3554,
+                "lng": 38.3335,
+                "city": "malatya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.614,
+                "lng": 27.4296,
+                "city": "manisa",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.5753,
+                "lng": 36.9228,
+                "city": "kahramanmaraş",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.3129,
+                "lng": 40.734,
+                "city": "mardin",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.2154,
+                "lng": 28.3634,
+                "city": "muğla",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.7346,
+                "lng": 41.491,
+                "city": "muş",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.6247,
+                "lng": 34.7142,
+                "city": "nevşehir",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.9698,
+                "lng": 34.6766,
+                "city": "niğde",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.9862,
+                "lng": 37.8797,
+                "city": "ordu",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.0255,
+                "lng": 40.5177,
+                "city": "rize",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.7889,
+                "lng": 30.406,
+                "city": "sakarya",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.2797,
+                "lng": 36.3361,
+                "city": "samsun",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.9274,
+                "lng": 41.942,
+                "city": "siirt",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 42.028,
+                "lng": 35.1517,
+                "city": "sinop",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.7505,
+                "lng": 37.015,
+                "city": "sivas",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.9781,
+                "lng": 27.5117,
+                "city": "tekirdağ",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.3235,
+                "lng": 36.5522,
+                "city": "tokat",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.0027,
+                "lng": 39.7168,
+                "city": "trabzon",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.1062,
+                "lng": 39.5483,
+                "city": "tunceli",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.1674,
+                "lng": 38.7955,
+                "city": "şanlıurfa",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.6742,
+                "lng": 29.4059,
+                "city": "uşak",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.5012,
+                "lng": 43.373,
+                "city": "van",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.821,
+                "lng": 34.8086,
+                "city": "yozgat",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.4535,
+                "lng": 31.7894,
+                "city": "zonguldak",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 38.3686,
+                "lng": 34.0297,
+                "city": "aksaray",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.2603,
+                "lng": 40.228,
+                "city": "bayburt",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.181,
+                "lng": 33.2222,
+                "city": "karaman",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.8398,
+                "lng": 33.5089,
+                "city": "kırıkkale",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.8895,
+                "lng": 41.1293,
+                "city": "batman",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.519,
+                "lng": 42.4537,
+                "city": "şırnak",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.6376,
+                "lng": 32.3338,
+                "city": "bartın",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.113,
+                "lng": 42.7023,
+                "city": "ardahan",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 39.9201,
+                "lng": 44.0436,
+                "city": "ığdır",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.6549,
+                "lng": 29.2842,
+                "city": "yalova",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 41.1956,
+                "lng": 32.6227,
+                "city": "karabük",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 36.7165,
+                "lng": 37.1147,
+                "city": "kilis",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 37.0746,
+                "lng": 36.2464,
+                "city": "osmaniye",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 40.8387,
+                "lng": 31.1626,
+                "city": "düzce",
+                "country": "Türkiye",
+                "tz": "Europe/Istanbul"
+            },
+            {
+                "lat": 23.43,
+                "lng": 90.24,
+                "city": "Dhaka",
+                "country": "Bangladesh",
+                "tz": "UTC"
+            },
+            {
+                "lat": 50.5,
+                "lng": 4.2,
+                "city": "Brussels",
+                "country": "Belgium",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.22,
+                "lng": -1.31,
+                "city": "Ouagadougou",
+                "country": "Burkina Faso",
+                "tz": "UTC"
+            },
+            {
+                "lat": 42.41,
+                "lng": 23.19,
+                "city": "Sofia",
+                "country": "Bulgaria",
+                "tz": "UTC"
+            },
+            {
+                "lat": 43.52,
+                "lng": 18.25,
+                "city": "Sarajevo",
+                "country": "Bosnia and Herzegovina",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.06,
+                "lng": -59.37,
+                "city": "Bridgetown",
+                "country": "Barbados",
+                "tz": "UTC"
+            },
+            {
+                "lat": -13.57,
+                "lng": -171.56,
+                "city": "Mata-Utu",
+                "country": "Wallis and Futuna",
+                "tz": "UTC"
+            },
+            {
+                "lat": 17.53,
+                "lng": -62.51,
+                "city": "Gustavia",
+                "country": "Saint Barthelemy",
+                "tz": "UTC"
+            },
+            {
+                "lat": 32.17,
+                "lng": -64.47,
+                "city": "Hamilton",
+                "country": "Bermuda",
+                "tz": "UTC"
+            },
+            {
+                "lat": 4.53,
+                "lng": 114.56,
+                "city": "Bandar Seri Begawan",
+                "country": "Brunei",
+                "tz": "UTC"
+            },
+            {
+                "lat": -16.3,
+                "lng": -68.09,
+                "city": "La Paz",
+                "country": "Bolivia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 26.14,
+                "lng": 50.34,
+                "city": "Manama",
+                "country": "Bahrain",
+                "tz": "UTC"
+            },
+            {
+                "lat": -3.22,
+                "lng": 29.21,
+                "city": "Bujumbura",
+                "country": "Burundi",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.29,
+                "lng": 2.37,
+                "city": "Porto-Novo",
+                "country": "Benin",
+                "tz": "UTC"
+            },
+            {
+                "lat": 27.29,
+                "lng": 89.36,
+                "city": "Thimphu",
+                "country": "Bhutan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.0,
+                "lng": -76.48,
+                "city": "Kingston",
+                "country": "Jamaica",
+                "tz": "UTC"
+            },
+            {
+                "lat": -24.45,
+                "lng": 25.55,
+                "city": "Gaborone",
+                "country": "Botswana",
+                "tz": "UTC"
+            },
+            {
+                "lat": -13.5,
+                "lng": -171.44,
+                "city": "Apia",
+                "country": "Samoa",
+                "tz": "UTC"
+            },
+            {
+                "lat": -15.47,
+                "lng": -47.55,
+                "city": "Brasilia",
+                "country": "Brazil",
+                "tz": "UTC"
+            },
+            {
+                "lat": 25.05,
+                "lng": -77.21,
+                "city": "Nassau",
+                "country": "Bahamas",
+                "tz": "UTC"
+            },
+            {
+                "lat": 49.11,
+                "lng": -2.06,
+                "city": "Saint Helier",
+                "country": "Jersey",
+                "tz": "UTC"
+            },
+            {
+                "lat": 53.54,
+                "lng": 27.34,
+                "city": "Minsk",
+                "country": "Belarus",
+                "tz": "UTC"
+            },
+            {
+                "lat": 17.15,
+                "lng": -88.46,
+                "city": "Belmopan",
+                "country": "Belize",
+                "tz": "UTC"
+            },
+            {
+                "lat": 55.45,
+                "lng": 37.35,
+                "city": "Moscow",
+                "country": "Russia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -1.57,
+                "lng": 30.04,
+                "city": "Kigali",
+                "country": "Rwanda",
+                "tz": "UTC"
+            },
+            {
+                "lat": 44.5,
+                "lng": 20.3,
+                "city": "Belgrade",
+                "country": "Serbia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -8.35,
+                "lng": 125.36,
+                "city": "Dili",
+                "country": "Timor-Leste",
+                "tz": "UTC"
+            },
+            {
+                "lat": 37.57,
+                "lng": 58.23,
+                "city": "Ashgabat",
+                "country": "Turkmenistan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 38.35,
+                "lng": 68.48,
+                "city": "Dushanbe",
+                "country": "Tajikistan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 44.26,
+                "lng": 26.06,
+                "city": "Bucharest",
+                "country": "Romania",
+                "tz": "UTC"
+            },
+            {
+                "lat": 11.51,
+                "lng": -15.35,
+                "city": "Bissau",
+                "country": "Guinea-Bissau",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.28,
+                "lng": 144.44,
+                "city": "Hagatna",
+                "country": "Guam",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.37,
+                "lng": -90.31,
+                "city": "Guatemala City",
+                "country": "Guatemala",
+                "tz": "UTC"
+            },
+            {
+                "lat": 37.59,
+                "lng": 23.44,
+                "city": "Athens",
+                "country": "Greece",
+                "tz": "UTC"
+            },
+            {
+                "lat": 3.45,
+                "lng": 8.47,
+                "city": "Malabo",
+                "country": "Equatorial Guinea",
+                "tz": "UTC"
+            },
+            {
+                "lat": 35.41,
+                "lng": 139.45,
+                "city": "Tokyo",
+                "country": "Japan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.48,
+                "lng": -58.1,
+                "city": "Georgetown",
+                "country": "Guyana",
+                "tz": "UTC"
+            },
+            {
+                "lat": 49.27,
+                "lng": -2.32,
+                "city": "Saint Peter Port",
+                "country": "Guernsey",
+                "tz": "UTC"
+            },
+            {
+                "lat": 41.43,
+                "lng": 44.47,
+                "city": "T'bilisi",
+                "country": "Georgia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.03,
+                "lng": -61.45,
+                "city": "Saint George's",
+                "country": "Grenada",
+                "tz": "UTC"
+            },
+            {
+                "lat": 51.3,
+                "lng": -0.1,
+                "city": "London",
+                "country": "United Kingdom",
+                "tz": "UTC"
+            },
+            {
+                "lat": 0.23,
+                "lng": 9.27,
+                "city": "Libreville",
+                "country": "Gabon",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.42,
+                "lng": -89.12,
+                "city": "San Salvador",
+                "country": "El Salvador",
+                "tz": "UTC"
+            },
+            {
+                "lat": 9.33,
+                "lng": -13.42,
+                "city": "Conakry",
+                "country": "Guinea",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.27,
+                "lng": -16.34,
+                "city": "Banjul",
+                "country": "Gambia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 64.11,
+                "lng": -51.45,
+                "city": "Nuuk",
+                "country": "Greenland",
+                "tz": "UTC"
+            },
+            {
+                "lat": 36.08,
+                "lng": -5.21,
+                "city": "Gibraltar",
+                "country": "Gibraltar",
+                "tz": "UTC"
+            },
+            {
+                "lat": 5.33,
+                "lng": -0.13,
+                "city": "Accra",
+                "country": "Ghana",
+                "tz": "UTC"
+            },
+            {
+                "lat": 23.37,
+                "lng": 58.35,
+                "city": "Muscat",
+                "country": "Oman",
+                "tz": "UTC"
+            },
+            {
+                "lat": 36.48,
+                "lng": 10.11,
+                "city": "Tunis",
+                "country": "Tunisia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 31.57,
+                "lng": 35.56,
+                "city": "Amman",
+                "country": "Jordan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 45.48,
+                "lng": 16.0,
+                "city": "Zagreb",
+                "country": "Croatia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.32,
+                "lng": -72.2,
+                "city": "Port-au-Prince",
+                "country": "Haiti",
+                "tz": "UTC"
+            },
+            {
+                "lat": 47.3,
+                "lng": 19.05,
+                "city": "Budapest",
+                "country": "Hungary",
+                "tz": "UTC"
+            },
+            {
+                "lat": 22.15,
+                "lng": 114.1,
+                "city": "Hong Kong",
+                "country": "Hong Kong",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.06,
+                "lng": -87.13,
+                "city": "Tegucigalpa",
+                "country": "Honduras",
+                "tz": "UTC"
+            },
+            {
+                "lat": 10.3,
+                "lng": -66.56,
+                "city": "Caracas",
+                "country": "Venezuela",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.28,
+                "lng": -66.07,
+                "city": "San Juan",
+                "country": "Puerto Rico",
+                "tz": "UTC"
+            },
+            {
+                "lat": 7.29,
+                "lng": 134.38,
+                "city": "Melekeok",
+                "country": "Palau",
+                "tz": "UTC"
+            },
+            {
+                "lat": 38.43,
+                "lng": -9.08,
+                "city": "Lisbon",
+                "country": "Portugal",
+                "tz": "UTC"
+            },
+            {
+                "lat": 78.13,
+                "lng": 15.33,
+                "city": "Longyearbyen",
+                "country": "Svalbard",
+                "tz": "UTC"
+            },
+            {
+                "lat": -25.16,
+                "lng": -57.4,
+                "city": "Asuncion",
+                "country": "Paraguay",
+                "tz": "UTC"
+            },
+            {
+                "lat": 33.2,
+                "lng": 44.23,
+                "city": "Baghdad",
+                "country": "Iraq",
+                "tz": "UTC"
+            },
+            {
+                "lat": 8.58,
+                "lng": -79.32,
+                "city": "Panama City",
+                "country": "Panama",
+                "tz": "UTC"
+            },
+            {
+                "lat": -17.32,
+                "lng": -149.34,
+                "city": "Papeete",
+                "country": "French Polynesia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -9.3,
+                "lng": 147.1,
+                "city": "Port Moresby",
+                "country": "Papua New Guinea",
+                "tz": "UTC"
+            },
+            {
+                "lat": -12.03,
+                "lng": -77.03,
+                "city": "Lima",
+                "country": "Peru",
+                "tz": "UTC"
+            },
+            {
+                "lat": 33.42,
+                "lng": 73.1,
+                "city": "Islamabad",
+                "country": "Pakistan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.35,
+                "lng": 121.0,
+                "city": "Manila",
+                "country": "Philippines",
+                "tz": "UTC"
+            },
+            {
+                "lat": -25.04,
+                "lng": -130.05,
+                "city": "Adamstown",
+                "country": "Pitcairn",
+                "tz": "UTC"
+            },
+            {
+                "lat": 52.15,
+                "lng": 21.0,
+                "city": "Warsaw",
+                "country": "Poland",
+                "tz": "UTC"
+            },
+            {
+                "lat": 46.46,
+                "lng": -56.11,
+                "city": "Saint-Pierre",
+                "country": "Saint Pierre and Miquelon",
+                "tz": "UTC"
+            },
+            {
+                "lat": -15.25,
+                "lng": 28.17,
+                "city": "Lusaka",
+                "country": "Zambia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 59.26,
+                "lng": 24.43,
+                "city": "Tallinn",
+                "country": "Estonia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 30.03,
+                "lng": 31.15,
+                "city": "Cairo",
+                "country": "Egypt",
+                "tz": "UTC"
+            },
+            {
+                "lat": -25.42,
+                "lng": 28.13,
+                "city": "Pretoria",
+                "country": "South Africa",
+                "tz": "UTC"
+            },
+            {
+                "lat": -0.13,
+                "lng": -78.3,
+                "city": "Quito",
+                "country": "Ecuador",
+                "tz": "UTC"
+            },
+            {
+                "lat": 41.54,
+                "lng": 12.29,
+                "city": "Rome",
+                "country": "Italy",
+                "tz": "UTC"
+            },
+            {
+                "lat": 21.02,
+                "lng": 105.51,
+                "city": "Hanoi",
+                "country": "Vietnam",
+                "tz": "UTC"
+            },
+            {
+                "lat": -9.26,
+                "lng": 159.57,
+                "city": "Honiara",
+                "country": "Solomon Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 9.02,
+                "lng": 38.42,
+                "city": "Addis Ababa",
+                "country": "Ethiopia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 2.04,
+                "lng": 45.22,
+                "city": "Mogadishu",
+                "country": "Somalia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -17.5,
+                "lng": 31.03,
+                "city": "Harare",
+                "country": "Zimbabwe",
+                "tz": "UTC"
+            },
+            {
+                "lat": 24.38,
+                "lng": 46.43,
+                "city": "Riyadh",
+                "country": "Saudi Arabia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 40.24,
+                "lng": -3.41,
+                "city": "Madrid",
+                "country": "Spain",
+                "tz": "UTC"
+            },
+            {
+                "lat": 15.2,
+                "lng": 38.56,
+                "city": "Asmara",
+                "country": "Eritrea",
+                "tz": "UTC"
+            },
+            {
+                "lat": 42.26,
+                "lng": 19.16,
+                "city": "Podgorica",
+                "country": "Montenegro",
+                "tz": "UTC"
+            },
+            {
+                "lat": 47.0,
+                "lng": 28.51,
+                "city": "Chisinau",
+                "country": "Moldova",
+                "tz": "UTC"
+            },
+            {
+                "lat": -18.55,
+                "lng": 47.31,
+                "city": "Antananarivo",
+                "country": "Madagascar",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.04,
+                "lng": -63.05,
+                "city": "Marigot",
+                "country": "Saint Martin",
+                "tz": "UTC"
+            },
+            {
+                "lat": 34.01,
+                "lng": -6.49,
+                "city": "Rabat",
+                "country": "Morocco",
+                "tz": "UTC"
+            },
+            {
+                "lat": 43.44,
+                "lng": 7.25,
+                "city": "Monaco",
+                "country": "Monaco",
+                "tz": "UTC"
+            },
+            {
+                "lat": 41.2,
+                "lng": 69.18,
+                "city": "Tashkent",
+                "country": "Uzbekistan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 16.48,
+                "lng": 96.09,
+                "city": "Rangoon",
+                "country": "Myanmar",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.39,
+                "lng": -8.0,
+                "city": "Bamako",
+                "country": "Mali",
+                "tz": "UTC"
+            },
+            {
+                "lat": 47.55,
+                "lng": 106.55,
+                "city": "Ulaanbaatar",
+                "country": "Mongolia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 7.06,
+                "lng": 171.23,
+                "city": "Majuro",
+                "country": "Marshall Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 42.0,
+                "lng": 21.26,
+                "city": "Skopje",
+                "country": "Macedonia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -20.09,
+                "lng": 57.29,
+                "city": "Port Louis",
+                "country": "Mauritius",
+                "tz": "UTC"
+            },
+            {
+                "lat": 35.53,
+                "lng": 14.3,
+                "city": "Valletta",
+                "country": "Malta",
+                "tz": "UTC"
+            },
+            {
+                "lat": -13.59,
+                "lng": 33.47,
+                "city": "Lilongwe",
+                "country": "Malawi",
+                "tz": "UTC"
+            },
+            {
+                "lat": 4.1,
+                "lng": 73.3,
+                "city": "Male",
+                "country": "Maldives",
+                "tz": "UTC"
+            },
+            {
+                "lat": 15.12,
+                "lng": 145.45,
+                "city": "Saipan",
+                "country": "Northern Mariana Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 16.42,
+                "lng": -62.13,
+                "city": "Plymouth",
+                "country": "Montserrat",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.07,
+                "lng": -16.02,
+                "city": "Nouakchott",
+                "country": "Mauritania",
+                "tz": "UTC"
+            },
+            {
+                "lat": 54.09,
+                "lng": -4.29,
+                "city": "Douglas",
+                "country": "Isle of Man",
+                "tz": "UTC"
+            },
+            {
+                "lat": 0.19,
+                "lng": 32.25,
+                "city": "Kampala",
+                "country": "Uganda",
+                "tz": "UTC"
+            },
+            {
+                "lat": 3.1,
+                "lng": 101.42,
+                "city": "Kuala Lumpur",
+                "country": "Malaysia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 19.26,
+                "lng": -99.08,
+                "city": "Mexico City",
+                "country": "Mexico",
+                "tz": "UTC"
+            },
+            {
+                "lat": 31.46,
+                "lng": 35.14,
+                "city": "Jerusalem",
+                "country": "Israel",
+                "tz": "UTC"
+            },
+            {
+                "lat": 48.52,
+                "lng": 2.2,
+                "city": "Paris",
+                "country": "France",
+                "tz": "UTC"
+            },
+            {
+                "lat": -15.56,
+                "lng": -5.44,
+                "city": "Jamestown",
+                "country": "Saint Helena Ascension and Tristan da Cunha",
+                "tz": "UTC"
+            },
+            {
+                "lat": 60.1,
+                "lng": 24.56,
+                "city": "Helsinki",
+                "country": "Finland",
+                "tz": "UTC"
+            },
+            {
+                "lat": -18.08,
+                "lng": 178.25,
+                "city": "Suva",
+                "country": "Fiji",
+                "tz": "UTC"
+            },
+            {
+                "lat": -51.42,
+                "lng": -57.51,
+                "city": "Stanley",
+                "country": "Falkland Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.55,
+                "lng": 158.09,
+                "city": "Palikir",
+                "country": "Micronesia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 62.01,
+                "lng": -6.46,
+                "city": "Torshavn",
+                "country": "Faroe Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.09,
+                "lng": -86.17,
+                "city": "Managua",
+                "country": "Nicaragua",
+                "tz": "UTC"
+            },
+            {
+                "lat": 52.23,
+                "lng": 4.54,
+                "city": "Amsterdam",
+                "country": "Netherlands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 59.55,
+                "lng": 10.45,
+                "city": "Oslo",
+                "country": "Norway",
+                "tz": "UTC"
+            },
+            {
+                "lat": -22.34,
+                "lng": 17.05,
+                "city": "Windhoek",
+                "country": "Namibia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -17.44,
+                "lng": 168.19,
+                "city": "Port-Vila",
+                "country": "Vanuatu",
+                "tz": "UTC"
+            },
+            {
+                "lat": -22.16,
+                "lng": 166.27,
+                "city": "Noumea",
+                "country": "New Caledonia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.31,
+                "lng": 2.07,
+                "city": "Niamey",
+                "country": "Niger",
+                "tz": "UTC"
+            },
+            {
+                "lat": -29.03,
+                "lng": 167.58,
+                "city": "Kingston",
+                "country": "Norfolk Island",
+                "tz": "UTC"
+            },
+            {
+                "lat": 9.05,
+                "lng": 7.32,
+                "city": "Abuja",
+                "country": "Nigeria",
+                "tz": "UTC"
+            },
+            {
+                "lat": -41.28,
+                "lng": 174.51,
+                "city": "Wellington",
+                "country": "New Zealand",
+                "tz": "UTC"
+            },
+            {
+                "lat": 27.43,
+                "lng": 85.19,
+                "city": "Kathmandu",
+                "country": "Nepal",
+                "tz": "UTC"
+            },
+            {
+                "lat": -19.01,
+                "lng": -169.55,
+                "city": "Alofi",
+                "country": "Niue",
+                "tz": "UTC"
+            },
+            {
+                "lat": -21.12,
+                "lng": -159.46,
+                "city": "Avarua",
+                "country": "Cook Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.49,
+                "lng": -5.17,
+                "city": "Yamoussoukro",
+                "country": "Ivory Coast",
+                "tz": "UTC"
+            },
+            {
+                "lat": 46.57,
+                "lng": 7.26,
+                "city": "Bern",
+                "country": "Switzerland",
+                "tz": "UTC"
+            },
+            {
+                "lat": 4.36,
+                "lng": -74.05,
+                "city": "Bogota",
+                "country": "Colombia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 39.55,
+                "lng": 116.23,
+                "city": "Beijing",
+                "country": "China",
+                "tz": "UTC"
+            },
+            {
+                "lat": 3.52,
+                "lng": 11.31,
+                "city": "Yaounde",
+                "country": "Cameroon",
+                "tz": "UTC"
+            },
+            {
+                "lat": -33.27,
+                "lng": -70.4,
+                "city": "Santiago",
+                "country": "Chile",
+                "tz": "UTC"
+            },
+            {
+                "lat": -12.1,
+                "lng": 96.5,
+                "city": "West Island",
+                "country": "Cocos Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 45.25,
+                "lng": -75.42,
+                "city": "Ottawa",
+                "country": "Canada",
+                "tz": "UTC"
+            },
+            {
+                "lat": -4.15,
+                "lng": 15.17,
+                "city": "Brazzaville",
+                "country": "Congo Republic",
+                "tz": "UTC"
+            },
+            {
+                "lat": 4.22,
+                "lng": 18.35,
+                "city": "Bangui",
+                "country": "Central African Republic",
+                "tz": "UTC"
+            },
+            {
+                "lat": -4.19,
+                "lng": 15.18,
+                "city": "Kinshasa",
+                "country": "Congo Democratic Republic",
+                "tz": "UTC"
+            },
+            {
+                "lat": 50.05,
+                "lng": 14.28,
+                "city": "Prague",
+                "country": "Czech Republic",
+                "tz": "UTC"
+            },
+            {
+                "lat": 35.1,
+                "lng": 33.22,
+                "city": "Nicosia",
+                "country": "Cyprus",
+                "tz": "UTC"
+            },
+            {
+                "lat": -10.25,
+                "lng": 105.43,
+                "city": "The Settlement",
+                "country": "Christmas Island",
+                "tz": "UTC"
+            },
+            {
+                "lat": 9.56,
+                "lng": -84.05,
+                "city": "San Jose",
+                "country": "Costa Rica",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.55,
+                "lng": -23.31,
+                "city": "Praia",
+                "country": "Cape Verde",
+                "tz": "UTC"
+            },
+            {
+                "lat": 23.07,
+                "lng": -82.21,
+                "city": "Havana",
+                "country": "Cuba",
+                "tz": "UTC"
+            },
+            {
+                "lat": -26.18,
+                "lng": 31.06,
+                "city": "Mbabane",
+                "country": "Swaziland",
+                "tz": "UTC"
+            },
+            {
+                "lat": 33.3,
+                "lng": 36.18,
+                "city": "Damascus",
+                "country": "Syria",
+                "tz": "UTC"
+            },
+            {
+                "lat": 42.52,
+                "lng": 74.36,
+                "city": "Bishkek",
+                "country": "Kyrgyzstan",
+                "tz": "UTC"
+            },
+            {
+                "lat": -1.17,
+                "lng": 36.49,
+                "city": "Nairobi",
+                "country": "Kenya",
+                "tz": "UTC"
+            },
+            {
+                "lat": 5.5,
+                "lng": -55.1,
+                "city": "Paramaribo",
+                "country": "Suriname",
+                "tz": "UTC"
+            },
+            {
+                "lat": 1.19,
+                "lng": 172.58,
+                "city": "Tarawa",
+                "country": "Kiribati",
+                "tz": "UTC"
+            },
+            {
+                "lat": 11.33,
+                "lng": 104.55,
+                "city": "Phnom Penh",
+                "country": "Cambodia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 17.18,
+                "lng": -62.43,
+                "city": "Basseterre",
+                "country": "Saint Kitts and Nevis",
+                "tz": "UTC"
+            },
+            {
+                "lat": -11.42,
+                "lng": 43.14,
+                "city": "Moroni",
+                "country": "Comoros",
+                "tz": "UTC"
+            },
+            {
+                "lat": 0.12,
+                "lng": 6.39,
+                "city": "Sao Tome",
+                "country": "Sao Tome and Principe",
+                "tz": "UTC"
+            },
+            {
+                "lat": 48.09,
+                "lng": 17.07,
+                "city": "Bratislava",
+                "country": "Slovakia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 37.33,
+                "lng": 126.59,
+                "city": "Seoul",
+                "country": "Korea South",
+                "tz": "UTC"
+            },
+            {
+                "lat": 46.03,
+                "lng": 14.31,
+                "city": "Ljubljana",
+                "country": "Slovenia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 39.01,
+                "lng": 125.45,
+                "city": "Pyongyang",
+                "country": "Korea North",
+                "tz": "UTC"
+            },
+            {
+                "lat": 29.22,
+                "lng": 47.58,
+                "city": "Kuwait City",
+                "country": "Kuwait",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.4,
+                "lng": -17.26,
+                "city": "Dakar",
+                "country": "Senegal",
+                "tz": "UTC"
+            },
+            {
+                "lat": 43.56,
+                "lng": 12.25,
+                "city": "San Marino",
+                "country": "San Marino",
+                "tz": "UTC"
+            },
+            {
+                "lat": 8.3,
+                "lng": -13.15,
+                "city": "Freetown",
+                "country": "Sierra Leone",
+                "tz": "UTC"
+            },
+            {
+                "lat": -4.38,
+                "lng": 55.27,
+                "city": "Victoria",
+                "country": "Seychelles",
+                "tz": "UTC"
+            },
+            {
+                "lat": 51.1,
+                "lng": 71.25,
+                "city": "Astana",
+                "country": "Kazakhstan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 19.18,
+                "lng": -81.23,
+                "city": "George Town",
+                "country": "Cayman Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 1.17,
+                "lng": 103.51,
+                "city": "Singapore",
+                "country": "Singapore",
+                "tz": "UTC"
+            },
+            {
+                "lat": 59.2,
+                "lng": 18.03,
+                "city": "Stockholm",
+                "country": "Sweden",
+                "tz": "UTC"
+            },
+            {
+                "lat": 15.36,
+                "lng": 32.32,
+                "city": "Khartoum",
+                "country": "Sudan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.28,
+                "lng": -69.54,
+                "city": "Santo Domingo",
+                "country": "Dominican Republic",
+                "tz": "UTC"
+            },
+            {
+                "lat": 15.18,
+                "lng": -61.24,
+                "city": "Roseau",
+                "country": "Dominica",
+                "tz": "UTC"
+            },
+            {
+                "lat": 11.35,
+                "lng": 43.09,
+                "city": "Djibouti",
+                "country": "Djibouti",
+                "tz": "UTC"
+            },
+            {
+                "lat": 55.4,
+                "lng": 12.35,
+                "city": "Copenhagen",
+                "country": "Denmark",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.27,
+                "lng": -64.37,
+                "city": "Road Town",
+                "country": "British Virgin Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 52.31,
+                "lng": 13.24,
+                "city": "Berlin",
+                "country": "Germany",
+                "tz": "UTC"
+            },
+            {
+                "lat": 15.21,
+                "lng": 44.12,
+                "city": "Sanaa",
+                "country": "Yemen",
+                "tz": "UTC"
+            },
+            {
+                "lat": 36.45,
+                "lng": 3.03,
+                "city": "Algiers",
+                "country": "Algeria",
+                "tz": "UTC"
+            },
+            {
+                "lat": 38.53,
+                "lng": -77.02,
+                "city": "Washington, DC",
+                "country": "United States",
+                "tz": "UTC"
+            },
+            {
+                "lat": -34.53,
+                "lng": -56.11,
+                "city": "Montevideo",
+                "country": "Uruguay",
+                "tz": "UTC"
+            },
+            {
+                "lat": -12.46,
+                "lng": 45.13,
+                "city": "Mamoudzou",
+                "country": "Mayotte",
+                "tz": "UTC"
+            },
+            {
+                "lat": 33.52,
+                "lng": 35.3,
+                "city": "Beirut",
+                "country": "Lebanon",
+                "tz": "UTC"
+            },
+            {
+                "lat": 14.01,
+                "lng": -61.0,
+                "city": "Castries",
+                "country": "Saint Lucia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 17.58,
+                "lng": 102.36,
+                "city": "Vientiane",
+                "country": "Laos",
+                "tz": "UTC"
+            },
+            {
+                "lat": -8.3,
+                "lng": 179.12,
+                "city": "Funafuti",
+                "country": "Tuvalu",
+                "tz": "UTC"
+            },
+            {
+                "lat": 25.03,
+                "lng": 121.3,
+                "city": "Taipei",
+                "country": "Taiwan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 10.39,
+                "lng": -61.31,
+                "city": "Port-of-Spain",
+                "country": "Trinidad and Tobago",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.56,
+                "lng": 79.51,
+                "city": "Colombo",
+                "country": "Sri Lanka",
+                "tz": "UTC"
+            },
+            {
+                "lat": 47.08,
+                "lng": 9.31,
+                "city": "Vaduz",
+                "country": "Liechtenstein",
+                "tz": "UTC"
+            },
+            {
+                "lat": 56.57,
+                "lng": 24.06,
+                "city": "Riga",
+                "country": "Latvia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -21.08,
+                "lng": -175.12,
+                "city": "Nuku'alofa",
+                "country": "Tonga",
+                "tz": "UTC"
+            },
+            {
+                "lat": 54.41,
+                "lng": 25.19,
+                "city": "Vilnius",
+                "country": "Lithuania",
+                "tz": "UTC"
+            },
+            {
+                "lat": 49.36,
+                "lng": 6.07,
+                "city": "Luxembourg",
+                "country": "Luxembourg",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.18,
+                "lng": -10.48,
+                "city": "Monrovia",
+                "country": "Liberia",
+                "tz": "UTC"
+            },
+            {
+                "lat": -29.19,
+                "lng": 27.29,
+                "city": "Maseru",
+                "country": "Lesotho",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.45,
+                "lng": 100.31,
+                "city": "Bangkok",
+                "country": "Thailand",
+                "tz": "UTC"
+            },
+            {
+                "lat": 6.08,
+                "lng": 1.13,
+                "city": "Lome",
+                "country": "Togo",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.06,
+                "lng": 15.02,
+                "city": "N'Djamena",
+                "country": "Chad",
+                "tz": "UTC"
+            },
+            {
+                "lat": 21.28,
+                "lng": -71.08,
+                "city": "Grand Turk",
+                "country": "Turks and Caicos Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 32.53,
+                "lng": 13.1,
+                "city": "Tripoli",
+                "country": "Libya",
+                "tz": "UTC"
+            },
+            {
+                "lat": 41.54,
+                "lng": 12.27,
+                "city": "Vatican City",
+                "country": "Holy See",
+                "tz": "UTC"
+            },
+            {
+                "lat": 13.09,
+                "lng": -61.14,
+                "city": "Kingstown",
+                "country": "Saint Vincent and the Grenadines",
+                "tz": "UTC"
+            },
+            {
+                "lat": 24.28,
+                "lng": 54.22,
+                "city": "Abu Dhabi",
+                "country": "United Arab Emirates",
+                "tz": "UTC"
+            },
+            {
+                "lat": 42.3,
+                "lng": 1.31,
+                "city": "Andorra la Vella",
+                "country": "Andorra",
+                "tz": "UTC"
+            },
+            {
+                "lat": 17.07,
+                "lng": -61.51,
+                "city": "Saint John's",
+                "country": "Antigua and Barbuda",
+                "tz": "UTC"
+            },
+            {
+                "lat": 34.31,
+                "lng": 69.11,
+                "city": "Kabul",
+                "country": "Afghanistan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.13,
+                "lng": -63.03,
+                "city": "The Valley",
+                "country": "Anguilla",
+                "tz": "UTC"
+            },
+            {
+                "lat": 18.21,
+                "lng": -64.56,
+                "city": "Charlotte Amalie",
+                "country": "Virgin Islands",
+                "tz": "UTC"
+            },
+            {
+                "lat": 64.09,
+                "lng": -21.57,
+                "city": "Reykjavik",
+                "country": "Iceland",
+                "tz": "UTC"
+            },
+            {
+                "lat": 35.4,
+                "lng": 51.25,
+                "city": "Tehran",
+                "country": "Iran",
+                "tz": "UTC"
+            },
+            {
+                "lat": 40.1,
+                "lng": 44.3,
+                "city": "Yerevan",
+                "country": "Armenia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 41.19,
+                "lng": 19.49,
+                "city": "Tirana",
+                "country": "Albania",
+                "tz": "UTC"
+            },
+            {
+                "lat": -8.5,
+                "lng": 13.14,
+                "city": "Luanda",
+                "country": "Angola",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.06,
+                "lng": -68.56,
+                "city": "Willemstad",
+                "country": "Netherlands Antilles",
+                "tz": "UTC"
+            },
+            {
+                "lat": -14.16,
+                "lng": -170.42,
+                "city": "Pago Pago",
+                "country": "American Samoa",
+                "tz": "UTC"
+            },
+            {
+                "lat": -34.36,
+                "lng": -58.4,
+                "city": "Buenos Aires",
+                "country": "Argentina",
+                "tz": "UTC"
+            },
+            {
+                "lat": -35.17,
+                "lng": 149.13,
+                "city": "Canberra",
+                "country": "Australia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 48.12,
+                "lng": 16.22,
+                "city": "Vienna",
+                "country": "Austria",
+                "tz": "UTC"
+            },
+            {
+                "lat": 12.31,
+                "lng": -70.02,
+                "city": "Oranjestad",
+                "country": "Aruba",
+                "tz": "UTC"
+            },
+            {
+                "lat": 28.36,
+                "lng": 77.12,
+                "city": "New Delhi",
+                "country": "India",
+                "tz": "UTC"
+            },
+            {
+                "lat": -6.48,
+                "lng": 39.17,
+                "city": "Dar es Salaam",
+                "country": "Tanzania",
+                "tz": "UTC"
+            },
+            {
+                "lat": 40.23,
+                "lng": 49.52,
+                "city": "Baku",
+                "country": "Azerbaijan",
+                "tz": "UTC"
+            },
+            {
+                "lat": 53.19,
+                "lng": -6.14,
+                "city": "Dublin",
+                "country": "Ireland",
+                "tz": "UTC"
+            },
+            {
+                "lat": -6.1,
+                "lng": 106.49,
+                "city": "Jakarta",
+                "country": "Indonesia",
+                "tz": "UTC"
+            },
+            {
+                "lat": 50.441,
+                "lng": 30.554,
+                "city": "Kiew",
+                "country": "Ukraine",
+                "tz": "UTC"
+            },
+            {
+                "lat": 25.17,
+                "lng": 51.32,
+                "city": "Doha",
+                "country": "Qatar",
+                "tz": "UTC"
+            },
+            {
+                "lat": -25.57,
+                "lng": 32.35,
+                "city": "Maputo",
+                "country": "Mozambique",
+                "tz": "UTC"
+            }
+        ];
+
+        // ─────────────────────────────────────────────
+        //  PRAYER COLORS, NAMES & AUDIO (Makams)
+        // ─────────────────────────────────────────────
+        const PRAYER_INFO = {
+            fajr: { color: 0x7b61ff, glowColor: '#7b61ff', name: 'Sabah (Fajr)', emoji: '🌙', audio: 'https://www.islamcan.com/audio/adhan/azan1.mp3' },
+            dhuhr: { color: 0xffcc00, glowColor: '#ffcc00', name: 'Öğle (Zuhr)', emoji: '☀️', audio: 'https://www.islamcan.com/audio/adhan/azan2.mp3' },
+            asr: { color: 0xff8c42, glowColor: '#ff8c42', name: 'İkindi (Asr)', emoji: '🌤️', audio: 'https://www.islamcan.com/audio/adhan/azan3.mp3' },
+            maghrib: { color: 0xff4f6d, glowColor: '#ff4f6d', name: 'Akşam (Maghrib)', emoji: '🌅', audio: 'https://www.islamcan.com/audio/adhan/azan4.mp3' },
+            isha: { color: 0x4fc3f7, glowColor: '#4fc3f7', name: 'Yatsı (Isha)', emoji: '🌃', audio: 'https://www.islamcan.com/audio/adhan/azan5.mp3' },
+        };
+
+        // Ezan window: prayer time ± this many minutes
+        const EZAN_WINDOW_MIN = 3;
+
+        // ─────────────────────────────────────────────
+        //  THREE.JS SETUP
+        // ─────────────────────────────────────────────
+        const container = document.getElementById('canvas-container');
+        const W = window.innerWidth, H = window.innerHeight;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(W, H);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+        camera.position.set(0, 0, 3.5);
+
+        // ── Stars ──
+        (function addStars() {
+            const geo = new THREE.BufferGeometry();
+            const n = 4000;
+            const pos = new Float32Array(n * 3);
+            for (let i = 0; i < n * 3; i++) {
+                pos[i] = (Math.random() - 0.5) * 300;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, sizeAttenuation: true });
+            scene.add(new THREE.Points(geo, mat));
+        })();
+
+        // ── Globe ──
+        const GLOBE_R = 1.0;
+        const globeGeo = new THREE.SphereGeometry(GLOBE_R, 64, 64);
+
+        // Atmosphere glow (outer sphere)
+        const atmosphereGeo = new THREE.SphereGeometry(GLOBE_R * 1.08, 64, 64);
+        const atmosphereMat = new THREE.ShaderMaterial({
+            vertexShader: `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+            fragmentShader: `
+    varying vec3 vNormal;
+    void main() {
+      float intensity = pow(0.7 - dot(vNormal, vec3(0,0,1.0)), 3.0);
+      gl_FragColor = vec4(0.09, 0.42, 0.82, 1.0) * intensity;
+    }
+  `,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide,
+            transparent: true,
+        });
+        scene.add(new THREE.Mesh(atmosphereGeo, atmosphereMat));
+
+        // ─────────────────────────────────────────────
+        //  REALISTIC EARTH TEXTURE
+        // ─────────────────────────────────────────────
+        const textureLoader = new THREE.TextureLoader();
+
+        // High-res realistic earth map
+        const earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+
+        const globeMat = new THREE.MeshPhongMaterial({
+            map: earthMap,
+            color: 0xffffff,
+            emissive: 0x111111,
+            specular: 0x222222,
+            shininess: 15,
+            transparent: false,
+        });
+
+        const globe = new THREE.Mesh(globeGeo, globeMat);
+        scene.add(globe);
+
+        // ── Lighting ──
+        scene.add(new THREE.AmbientLight(0x334466, 1.2));
+        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+        sunLight.position.set(5, 3, 5);
+        scene.add(sunLight);
+        const rimLight = new THREE.DirectionalLight(0x2244aa, 0.5);
+        rimLight.position.set(-5, -2, -3);
+        scene.add(rimLight);
+
+        // ─────────────────────────────────────────────
+        //  HELPER: lat/lng → 3D position
+        // ─────────────────────────────────────────────
+        function latLngToVec3(lat, lng, r) {
+            const phi = (90 - lat) * Math.PI / 180;
+            const theta = (lng + 180) * Math.PI / 180;
+            return new THREE.Vector3(
+                -r * Math.sin(phi) * Math.cos(theta),
+                r * Math.cos(phi),
+                r * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // ─────────────────────────────────────────────
+        //  PRAYER TIME CALCULATION
+        // ─────────────────────────────────────────────
+        function calcPrayerTimes(lat, lng, date) {
+            try {
+                const coords = new adhan.Coordinates(lat, lng);
+                let params;
+                // Türkiye Diyanet İşleri Başkanlığı verilerine uygun hesaplama
+                if (adhan.CalculationMethod.Turkey) {
+                    params = adhan.CalculationMethod.Turkey();
+                } else {
+                    params = adhan.CalculationMethod.MuslimWorldLeague();
+                    params.fajrAngle = 18;
+                    params.ishaAngle = 17;
+                }
+                const pt = new adhan.PrayerTimes(coords, date, params);
+                return {
+                    fajr: pt.fajr,
+                    dhuhr: pt.dhuhr,
+                    asr: pt.asr,
+                    maghrib: pt.maghrib,
+                    isha: pt.isha,
+                    raw: pt // Sonraki vakti hesaplamak için orjinal objeyi de saklıyoruz
+                };
+            } catch (e) { return null; }
+        }
+
+        function isEzanNow(prayerTime, nowMs) {
+            const diff = Math.abs(nowMs - prayerTime.getTime()) / 60000; // minutes
+            return diff <= EZAN_WINDOW_MIN;
+        }
+
+        function currentPrayer(times, nowMs) {
+            const window = EZAN_WINDOW_MIN * 60 * 1000;
+            for (const [key, t] of Object.entries(times)) {
+                if (key === 'raw') continue;
+                if (t && Math.abs(nowMs - t.getTime()) <= window) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
+        // ─────────────────────────────────────────────
+        //  MARKERS
+        // ─────────────────────────────────────────────
+        const markerGroup = new THREE.Group();
+        scene.add(markerGroup);
+
+        const cityData = []; // stores { city, marker3D, glowMesh, ringMesh, times }
+
+        function createMarker(color) {
+            const group = new THREE.Group();
+
+            // Core dot — bigger
+            const dotGeo = new THREE.SphereGeometry(0.018, 16, 16);
+            const dotMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 });
+            const dot = new THREE.Mesh(dotGeo, dotMat);
+            group.add(dot);
+
+            // Inner glow
+            const glowGeo = new THREE.SphereGeometry(0.034, 16, 16);
+            const glowMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3, side: THREE.FrontSide });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            group.add(glow);
+
+            // Outer glow halo
+            const haloGeo = new THREE.SphereGeometry(0.055, 16, 16);
+            const haloMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.08, side: THREE.FrontSide });
+            const halo = new THREE.Mesh(haloGeo, haloMat);
+            group.add(halo);
+
+            // Ring 1
+            const ringGeo = new THREE.RingGeometry(0.040, 0.052, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            group.add(ring);
+
+            // Ring 2 (outer pulse)
+            const ring2Geo = new THREE.RingGeometry(0.065, 0.072, 32);
+            const ring2Mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+            const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+            group.add(ring2);
+
+            return { group, dot, dotMat, glow, glowMat, halo, haloMat, ring, ringMat, ring2, ring2Mat };
+        }
+
+        function buildMarkers() {
+            // Remove old markers
+            while (markerGroup.children.length) markerGroup.remove(markerGroup.children[0]);
+            cityData.length = 0;
+
+            CITIES.forEach((c, i) => {
+                setTimeout(() => {
+                    const date = new Date();
+                    const times = calcPrayerTimes(c.lat, c.lng, date);
+                    if (!times) return;
+
+                    const pos = latLngToVec3(c.lat, c.lng, GLOBE_R + 0.012);
+                    const marker = createMarker(0x334466);
+                    marker.group.position.copy(pos);
+
+                    // Orient ring to face outward
+                    const normal = pos.clone().normalize();
+                    const up = new THREE.Vector3(0, 1, 0);
+                    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, normal);
+                    marker.ring.quaternion.copy(quaternion);
+
+                    markerGroup.add(marker.group);
+                    cityData.push({ ...c, pos, marker, times });
+
+                    const pct = Math.round(((i + 1) / CITIES.length) * 100);
+                    document.getElementById('ld-fill').style.width = pct + '%';
+
+                    if (i === CITIES.length - 1) {
+                        setTimeout(() => {
+                            const ld = document.getElementById('loading');
+                            ld.style.opacity = '0';
+                            setTimeout(() => ld.style.display = 'none', 1000);
+                        }, 400);
+                        updateMarkers();
+                    }
+                }, i * 8);
+            });
+        }
+
+        // ─────────────────────────────────────────────
+        //  UPDATE MARKERS STATE
+        // ─────────────────────────────────────────────
+        const prayerCounts = { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 };
+        let activeCount = 0;
+
+        function updateMarkers() {
+            const now = new Date();
+            const nowMs = now.getTime();
+            activeCount = 0;
+            Object.keys(prayerCounts).forEach(k => prayerCounts[k] = 0);
+
+            cityData.forEach(cd => {
+                const prayer = currentPrayer(cd.times, nowMs);
+                cd.activePrayer = prayer;
+
+                if (prayer) {
+                    const info = PRAYER_INFO[prayer];
+                    const col = new THREE.Color(info.color);
+                    cd.marker.dotMat.color.set(col);
+                    cd.marker.glowMat.color.set(col);
+                    cd.marker.ringMat.color.set(col);
+                    cd.marker.ring2Mat.color.set(col);
+                    cd.marker.haloMat.color.set(col);
+                    cd.marker.dotMat.opacity = 1;
+                    cd.marker.glowMat.opacity = 0.65;
+                    cd.marker.ringMat.opacity = 0.95;
+                    cd.marker.ring2Mat.opacity = 0.45;
+                    cd.marker.haloMat.opacity = 0.15;
+                    cd.marker.dot.scale.setScalar(2.0);
+                    cd.active = true;
+                    activeCount++;
+                    prayerCounts[prayer]++;
+                } else {
+                    cd.marker.dotMat.color.set(0x1a3355);
+                    cd.marker.glowMat.color.set(0x0d1a2e);
+                    cd.marker.ringMat.color.set(0x0d1a2e);
+                    cd.marker.ring2Mat.color.set(0x0d1a2e);
+                    cd.marker.haloMat.color.set(0x0d1a2e);
+                    cd.marker.dotMat.opacity = 0.35;
+                    cd.marker.glowMat.opacity = 0.04;
+                    cd.marker.ringMat.opacity = 0.06;
+                    cd.marker.ring2Mat.opacity = 0.03;
+                    cd.marker.haloMat.opacity = 0.01;
+                    cd.marker.dot.scale.setScalar(1.0);
+                    cd.active = false;
+                }
+            });
+
+            // Recalculate times for next day if needed — update times periodically
+            cityData.forEach(cd => {
+                // Refresh prayer times each call
+                const fresh = calcPrayerTimes(cd.lat, cd.lng, now);
+                if (fresh) cd.times = fresh;
+
+                // Sonraki ezan vaktini hesapla
+                if (cd.times && cd.times.raw) {
+                    let next = cd.times.raw.nextPrayer();
+                    let nextTime = cd.times.raw.timeForPrayer(next);
+
+                    if (next === 'none' || !nextTime) {
+                        const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                        const tmrwTimes = calcPrayerTimes(cd.lat, cd.lng, tomorrow);
+                        if (tmrwTimes && tmrwTimes.raw) {
+                            next = 'fajr';
+                            nextTime = tmrwTimes.raw.timeForPrayer('fajr');
+                        }
+                    }
+
+                    cd.nextPrayerName = (next !== 'none' && PRAYER_INFO[next]) ? PRAYER_INFO[next].name : '-';
+                    cd.nextPrayerTime = nextTime;
+                }
+            });
+
+            // Türkiye için genel sonraki ezan hesabı (İstanbul baz alınarak)
+            const trCity = cityData.find(c => c.city && c.city.toLowerCase() === 'istanbul');
+            if (trCity && trCity.nextPrayerTime) {
+                const diffMs = trCity.nextPrayerTime.getTime() - nowMs;
+                if (diffMs > 0) {
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const hrs = Math.floor(diffMins / 60);
+                    const mins = diffMins % 60;
+                    document.getElementById('stat-next-tr').textContent =
+                        `${trCity.nextPrayerName} (${hrs > 0 ? hrs + 's ' : ''}${mins}dk)`;
+                } else {
+                    document.getElementById('stat-next-tr').textContent = 'Hesaplanıyor...';
+                }
+            }
+
+            updateStats();
+            updateLegend();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-active').textContent = activeCount;
+            document.getElementById('stat-total').textContent = CITIES.length;
+
+            // Peak prayer
+            let peak = '-';
+            let max = 0;
+            for (const [k, v] of Object.entries(prayerCounts)) {
+                if (v > max) { max = v; peak = PRAYER_INFO[k].emoji + ' ' + PRAYER_INFO[k].name; }
+            }
+            document.getElementById('stat-peak').textContent = max > 0 ? peak : '-';
+            // Türkiye Saatine (TSİ) göre formatlama
+            const options = { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('stat-update').textContent = new Date().toLocaleTimeString('tr-TR', options) + ' TSİ';
+        }
+
+        function updateLegend() {
+            const legs = { fajr: 'leg-fajr', dhuhr: 'leg-dhuhr', asr: 'leg-asr', maghrib: 'leg-maghrib', isha: 'leg-isha' };
+            for (const [k, id] of Object.entries(legs)) {
+                const el = document.getElementById(id);
+                if (prayerCounts[k] > 0) {
+                    el.classList.add('act');
+                    el.querySelector('span').textContent = PRAYER_INFO[k].name + ' (' + prayerCounts[k] + ')';
+                } else {
+                    el.classList.remove('act');
+                    el.querySelector('span').textContent = PRAYER_INFO[k].name;
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        //  ORBIT CONTROLS (manual)
+        // ─────────────────────────────────────────────
+        let isDragging = false, prevMouse = { x: 0, y: 0 };
+        let rotX = 0, rotY = 0;
+        let autoRotate = true;
+        let autoTimer = null;
+
+        document.addEventListener('mousedown', e => {
+            isDragging = true;
+            prevMouse = { x: e.clientX, y: e.clientY };
+            autoRotate = false;
+            clearTimeout(autoTimer);
+        });
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            autoTimer = setTimeout(() => autoRotate = true, 4000);
+        });
+        document.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const dx = e.clientX - prevMouse.x;
+            const dy = e.clientY - prevMouse.y;
+            rotY += dx * 0.005;
+            rotX += dy * 0.005;
+            rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+            prevMouse = { x: e.clientX, y: e.clientY };
+            globe.rotation.y = rotY;
+            globe.rotation.x = rotX;
+            markerGroup.rotation.y = rotY;
+            markerGroup.rotation.x = rotX;
+        });
+
+        // Touch
+        document.addEventListener('touchstart', e => {
+            isDragging = true;
+            prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            autoRotate = false; clearTimeout(autoTimer);
+        });
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+            autoTimer = setTimeout(() => autoRotate = true, 4000);
+        });
+        document.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            const dx = e.touches[0].clientX - prevMouse.x;
+            const dy = e.touches[0].clientY - prevMouse.y;
+            rotY += dx * 0.005;
+            rotX += dy * 0.003;
+            rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+            prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            globe.rotation.y = rotY; globe.rotation.x = rotX;
+            markerGroup.rotation.y = rotY; markerGroup.rotation.x = rotX;
+        });
+
+        // Scroll zoom
+        document.addEventListener('wheel', e => {
+            camera.position.z = Math.max(1.8, Math.min(6, camera.position.z + e.deltaY * 0.002));
+        });
+
+        // ─────────────────────────────────────────────
+        //  RAYCASTING / TOOLTIP & AUDIO PLAYING
+        // ─────────────────────────────────────────────
+        const raycaster = new THREE.Raycaster();
+        const mouse2D = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+        const audioPlayer = document.getElementById('adhan-player');
+
+        // Track the currently hovered active city
+        let hoveredCity = null;
+
+        document.addEventListener('mousemove', e => {
+            mouse2D.x = (e.clientX / W) * 2 - 1;
+            mouse2D.y = -(e.clientY / H) * 2 + 1;
+
+            if (isDragging) return;
+
+            raycaster.setFromCamera(mouse2D, camera);
+            const objects = cityData.map(cd => cd.marker.dot);
+            const hits = raycaster.intersectObjects(objects);
+
+            if (hits.length) {
+                document.body.style.cursor = 'pointer';
+                const idx = objects.indexOf(hits[0].object);
+                if (idx >= 0) {
+                    const cd = cityData[idx];
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (e.clientX + 14) + 'px';
+                    tooltip.style.top = (e.clientY - 14) + 'px';
+                    document.getElementById('tt-city').textContent = cd.city;
+                    document.getElementById('tt-country').textContent = cd.country;
+
+                    if (cd.activePrayer) {
+                        hoveredCity = cd;
+                        const pi = PRAYER_INFO[cd.activePrayer];
+                        document.getElementById('tt-dot').style.background = pi.glowColor;
+                        document.getElementById('tt-name').textContent = pi.emoji + ' ' + pi.name + ' ezanı okunuyor';
+                        document.getElementById('tt-name').style.color = pi.glowColor;
+                        const t = cd.times[cd.activePrayer];
+                        document.getElementById('tt-time').textContent = '⏰ ' + t.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' }) + ' (TSİ)';
+                        document.getElementById('tt-click-hint').style.display = 'block';
+                    } else {
+                        hoveredCity = null;
+                        document.getElementById('tt-dot').style.background = '#334';
+                        document.getElementById('tt-name').textContent = 'Şu an ezan vakti değil';
+                        document.getElementById('tt-name').style.color = 'rgba(255,255,255,.5)';
+                        document.getElementById('tt-time').textContent = '';
+                        document.getElementById('tt-click-hint').style.display = 'none';
+                    }
+
+                    // Bir sonraki ezan bilgisini göster
+                    if (cd.nextPrayerName && cd.nextPrayerTime) {
+                        const nextDateStr = cd.nextPrayerTime.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' });
+                        document.getElementById('tt-next').textContent = `Sonraki: ${cd.nextPrayerName} (${nextDateStr} TSİ)`;
+                        document.getElementById('tt-next').style.display = 'block';
+                    } else {
+                        document.getElementById('tt-next').style.display = 'none';
+                    }
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                tooltip.style.display = 'none';
+                hoveredCity = null;
+            }
+        });
+
+        // Click to play Adhan
+        document.addEventListener('click', () => {
+            if (hoveredCity && hoveredCity.activePrayer) {
+                const pi = PRAYER_INFO[hoveredCity.activePrayer];
+                audioPlayer.src = pi.audio;
+                audioPlayer.play().then(() => {
+                    document.getElementById('tt-click-hint').textContent = '🔊 Ezan okunuyor...';
+                }).catch(err => {
+                    console.log("Audio play failed:", err);
+                    document.getElementById('tt-click-hint').textContent = '🔇 Ses oynatılamadı veya engellendi';
+                });
+            }
+        });
+
+
+
+        // ─────────────────────────────────────────────
+        //  ANIMATION LOOP
+        // ─────────────────────────────────────────────
+        let t = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            t += 0.016;
+
+            // Auto-rotate
+            if (autoRotate) {
+                rotY += 0.0015;
+                globe.rotation.y = rotY;
+                markerGroup.rotation.y = rotY;
+            }
+
+            // Pulse active markers
+            cityData.forEach(cd => {
+                if (cd.active) {
+                    const pulse = 1.0 + 0.45 * Math.sin(t * 3.0 + cd.lat);
+                    const pulse2 = 1.0 + 0.6 * Math.sin(t * 2.2 + cd.lng + 1.2);
+                    cd.marker.glow.scale.setScalar(pulse);
+                    cd.marker.halo.scale.setScalar(pulse2);
+                    cd.marker.ring.scale.setScalar(pulse * 0.9);
+                    cd.marker.ring2.scale.setScalar(pulse2 * 0.85);
+                    cd.marker.ringMat.opacity = 0.5 + 0.45 * Math.sin(t * 2.5 + cd.lng);
+                    cd.marker.ring2Mat.opacity = 0.2 + 0.25 * Math.sin(t * 1.8 + cd.lat + 2.0);
+                    cd.marker.haloMat.opacity = 0.06 + 0.09 * Math.abs(Math.sin(t * 1.5 + cd.lat));
+                } else {
+                    cd.marker.glow.scale.setScalar(1);
+                    cd.marker.ring.scale.setScalar(1);
+                    cd.marker.ring2.scale.setScalar(1);
+                    cd.marker.halo.scale.setScalar(1);
+                }
+            });
+
+
+            renderer.render(scene, camera);
+        }
+
+        // ─────────────────────────────────────────────
+        //  RESIZE
+        // ─────────────────────────────────────────────
+        window.addEventListener('resize', () => {
+            const w = window.innerWidth, h = window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        });
+
+        // ─────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────
+        buildMarkers();
+        animate();
+
+        // Update prayer times every 30 seconds
+        setInterval(updateMarkers, 30 * 1000);
+
+        // Mobile Stats Toggle Logic
+        function toggleMobileStats() {
+            if (window.innerWidth <= 768) {
+                const panel = document.getElementById('info-panel');
+                const overlay = document.getElementById('info-panel-overlay');
+                panel.classList.toggle('popup-active');
+                overlay.classList.toggle('popup-active');
+            }
+        }
+
+        // Help Modal Logic
+        function openHelpModal() {
+            const modal = document.getElementById('help-modal');
+            const overlay = document.getElementById('help-modal-overlay');
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            // Trigger reflow for animation
+            void modal.offsetWidth;
+            modal.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        function closeHelpModal() {
+            const modal = document.getElementById('help-modal');
+            const overlay = document.getElementById('help-modal-overlay');
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                modal.classList.remove('active');
+                overlay.classList.remove('active');
+            }, 300); // Transition bekleme süresi
+        }
+    </script>
+</body>
+
+</html>
